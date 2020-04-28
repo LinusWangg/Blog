@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link href="https://cdn.bootcss.com/highlight.js/9.15.10/styles/a11y-dark.min.css" rel="stylesheet">
+  <link href="https://qinmaye.top/usr/themes/Adams/style/style.css" type="text/css" rel="stylesheet">
+  <link href="https://qinmaye.top/usr/themes/Adams/static/caomei1.2.8/style.css" type="text/css" rel="stylesheet">
+  <link href="https://qinmaye.top/usr/themes/Adams/style/wpBlockLib.css" type="text/css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC:300|Noto+Serif+SC:300&amp;display=swap" rel="stylesheet">
+  <link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://qinmaye.top/action/xmlrpc?rsd">
+  <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://qinmaye.top/action/xmlrpc?wlw">
+  <link href="//cdn.bootcss.com/KaTeX/0.10.0/katex.min.css" rel="stylesheet">
+  <title>Title</title>
+</head>
+<body>
+  <header class="header" style="margin:0 0 0">
+    <section class="container">
+      <hgroup itemscope="" itemtype="https://schema.org/WPHeader">
+        <h1 class="fullname">
+			    胖鸡闲址		
+        </h1>
+      </hgroup>
+      <nav class="social">
+		    <ul id="menu-socialx" class="menu">
+		      <li id="menu-item-4831" class="czs-rss menu-item menu-item-type-custom menu-item-object-custom">
+            <a title="RSS" target="_blank" href="http://127.0.0.1:8000/index/info">RSS</a></li>
+          <li id="menu-item-4832" class="czs-github-logo menu-item menu-item-type-custom menu-item-object-custom">
+            <a title="GitHub" target="_blank" href="https://github.com/Davidyin1">GitHub</a></li>
+        </ul>
+		  </nav>
+      <nav class="header_nav">
+		    <ul id="menu-header" class="menu">
+		      <li id="menu-item-4759" class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item menu-item-4759">
+            <a href="http://127.0.0.1:8000/content/content" aria-current="page">
+              首页
+            </a>
+          </li>
+          <li class="menu-item menu-item-type-custom menu-item-object-custom">
+            <a href="" title="关于">关于</a></li>
+          <li class="menu-item menu-item-type-custom menu-item-object-custom">
+            <a href="" title="朋友们">朋友们</a></li>
+        </ul>
+		  </nav>
+    </section>
+    <div style="width:980px;height:28px;margin:0 auto;border-bottom:2px solid #ddd;margin-bottom:28px;text-align:center;">
+    </div>
+  </header>
+  <section class="posts main-load">
+    <div class="container">
+      <div class="post-list">
+        {% for content in content_list %}
+        <article class="meta" itemscope="" itemtype="http://schema.org/BlogPosting">
+          <header>
+            <a href="http://127.0.0.1:8000/content/content/{{ content.id }}" itemprop="url">
+              <h2 itemprop="name headline">
+                {{content.title}}
+              </h2>
+            </a>
+          </header>
+          <main>
+              <p itemprop="articleBody" class="">
+                {{content.content|safe}} 
+              </p>
+          </main>
+          <footer>
+            <span class="time">{{content.createtime}}发布</span>
+            <span class="hr"></span>
+            <span class="comments">评论{{content.commitnum}}条评论 </span>
+          </footer>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+	  <section class="container">
+        <span id="hitokoto"> 遇不可说之事，必须保持沉默。</span>
+        <p>
+            <span class="left">© 2020                <a href="http://127.0.0.1:8000/content/content">胖鸡闲扯</a>
+            <span class="right"> Theme by <a href="https://biji.io" target="_blank">Adams</a></span>
+        </span></p>
+	  <p>
+		<a href="http://beian.miit.gov.cn">苏ICP备19040829号-2</a>
+	  </p>
+</body>
+</html>
