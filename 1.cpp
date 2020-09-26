@@ -21,7 +21,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glPushMatrix();
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	GLfloat lightpos[] = { 0.f, 100.f, -450.f, ll };			// ø……Ë∂Øª≠
+	GLfloat lightpos[] = { 0.f, 100.f, -450.f, ll };			// ÂèØËÆæÂä®Áîª
 	GLfloat light0_mat1[] = { 0.2, 0.2, 0.2, 0.3f };
 	GLfloat light0_diff[] = { 1.0, 1.0, 1.0, 0.3 };
 	GLfloat lightpos2[] = { 0.0,0.0,0.0,ll };
@@ -118,13 +118,50 @@ void display(void) // Here's Where We Do All The Drawing
 	glScalef(3.0, 0.7, 1.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
-	//air-condition
 
-	glTranslatef(-100.0, 63.0, -75.0);
+	//air-condition
+	glTranslatef(-100.0, 63.0, -65.0); //(0,0,-300)
 	glPushMatrix();
-	glTranslatef(-100.0, 60.0, 50.0);
+	glTranslatef(-100.0, 60.0, 25.0); //(-100,60,-250)
 	glPushMatrix();
 	glScalef(5.0, 1.5, 2.5);
+	glutSolidCube(20.0);
+	glPopMatrix();
+
+	//Table
+	glTranslatef(0.0, -90.0, 15.0);  //(-100,-30,-235)
+	glPushMatrix();
+	glScalef(8.0, 0.4, 6.5);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glTranslatef(-75, -37, 0.0);  //(-175,-67,-235)
+	glPushMatrix();
+	glScalef(0.5, 3.3, 6.5);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glTranslatef(135, 0.0, 0.0);  //(-40,-67,-235)
+	glPushMatrix();
+	glScalef(2.0, 3.3, 6.5);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glTranslatef(-105, -3, -25);  //(-145,-70,-260)
+	glPushMatrix();
+	glScalef(3.0, 0.4, 4.0);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glTranslatef(26, 20, 0);  //(-119,-50,-260)
+	glPushMatrix();
+	glScalef(0.4, 2.0, 4.0);
+	glutSolidCube(20.0);
+	glPopMatrix();
+
+	//chair
+	glTranslatef(119, 50, -40);  //(0,0,-300)
+	glPushMatrix();
+	glPopMatrix();
+	glTranslatef(-100, -50, 270);  //(-100,-50,-130)
+	glPushMatrix();
+	glScalef(2.5, 0.3, 2.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
