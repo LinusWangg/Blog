@@ -25,7 +25,7 @@ SECRET_KEY = '!boux2q$0am)2#%m3gb&d!c8(%#i2%@gvq7a(q_yy(z0rvswl-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -127,11 +127,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    (os.path.join(BASE_DIR, 'static'))
-]
+STATIC_URL = '/static/'
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static")
+# ]
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  #media必须存在，且在项目目录下
 MEDIA_URL = '/media/'   #你上传的文件和图片会默认存在/media/editor下
