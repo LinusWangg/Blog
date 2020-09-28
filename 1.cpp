@@ -2,8 +2,11 @@
 #include<stdio.h>
 #include<windows.h>
 #include <GL/glut.h>
+#include<math.h>
 float l1 = 0.25;
 float ll = 1.0;
+float angle = 0.0;
+int option = 0;
 
 void init(void) // All Setup For OpenGL Goes Here
 {
@@ -98,72 +101,151 @@ void display(void) // Here's Where We Do All The Drawing
 	glEnd();
 	//bed
 	glColor3f(0.7, 0.7, 0.5);
-	glTranslatef(100.0, -60.0, 10.0);//(100,-60,-290)
 	glPushMatrix();
+	glTranslatef(100.0, -60.0, 10.0);//(100,-60,-290)
 	glScalef(6.5, 4.0, 1.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
-	glTranslatef(0.0, -25.0, 120);//(100,-85,-170)
 	glPushMatrix();
+	glTranslatef(100.0, -85.0, 130);//(100,-85,-170)
 	glScalef(6.0, 1.5, 12.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
-	glTranslated(0, 20, 40.0);//(100,-65,-130)
 	glPushMatrix();
+	glTranslated(100,-65,170);//(100,-65,-130)
 	glScalef(5.0, 0.5, 5.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
-	glTranslatef(0.0, 2.0, -105.0);//(100,-63,-235)
 	glPushMatrix();
+	glTranslatef(100,-63,65);//(100,-63,-235)
 	glScalef(3.0, 0.7, 1.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	//air-condition
-	glTranslatef(-100.0, 63.0, -65.0); //(0,0,-300)
 	glPushMatrix();
-	glTranslatef(-100.0, 60.0, 25.0); //(-100,60,-250)
-	glPushMatrix();
+	glTranslatef(-100.0, 60.0, 25.0); //(-100,60,-275)
 	glScalef(5.0, 1.5, 2.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	//Table
-	glTranslatef(0.0, -90.0, 15.0);  //(-100,-30,-235)
 	glPushMatrix();
+	glTranslatef(-100, -30, 40);  //(-100,-30,-260)
 	glScalef(8.0, 0.4, 6.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
-	glTranslatef(-75, -37, 0.0);  //(-175,-67,-235)
 	glPushMatrix();
+	glTranslatef(-175, -67, 40);  //(-175,-67,-260)
 	glScalef(0.5, 3.3, 6.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
-	glTranslatef(135, 0.0, 0.0);  //(-40,-67,-235)
 	glPushMatrix();
+	glTranslatef(-40, -67, 40);  //(-40,-67,-260)
 	glScalef(2.0, 3.3, 6.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
-	glTranslatef(-105, -3, -25);  //(-145,-70,-260)
 	glPushMatrix();
+	glTranslatef(-145, -70, 15);  //(-145,-70,-285)
 	glScalef(3.0, 0.4, 4.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
-	glTranslatef(26, 20, 0);  //(-119,-50,-260)
 	glPushMatrix();
+	glTranslatef(-119, -50, 15);  //(-119,-50,-285)
 	glScalef(0.4, 2.0, 4.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	//chair
-	glTranslatef(119, 50, -40);  //(0,0,-300)
 	glPushMatrix();
-	glPopMatrix();
-	glTranslatef(-100, -50, 270);  //(-100,-50,-130)
-	glPushMatrix();
+	glTranslatef(-100, -60, 220);  //(-100,-60,-80)
 	glScalef(2.5, 0.3, 2.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-100, -80, 220);  //(-100,-80,-80)
+	glScalef(0.2, 1.8, 0.2);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-100, -97, 220);  //(-100,-97,-80)
+	GLUquadric* pObj;
+	pObj = gluNewQuadric();
+	glRotatef(90.0, 1.0, 0.0, 0.0);
+	glPushMatrix();
+	gluCylinder(pObj, 30, 30, 6, 32, 5);
+	//glScalef(1.5, 0.3, 1.5);
+	//glutSolidCube(20.0);
+	glPopMatrix();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-100, -100, 220);  //(-100,-100,-80)
+	glRotatef(90.0, 1.0, 0.0, 0.0);
+	int i;
+	glBegin(GL_POLYGON);
+	for (i = 0; i < 100; i++)
+	{
+		glVertex2f(30 * cos(2 * 3.1415926536 / 100 * i), 30 * sin(2 * 3.1415926536 / 100 * i));
+	}
+	glEnd();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-100, -97, 220);  //(-100,-97,-80)
+	glRotatef(90.0, 1.0, 0.0, 0.0);
+	glBegin(GL_POLYGON);
+	for (i = 0; i < 100; i++)
+	{
+		glVertex2f(30 * cos(2 * 3.1415926536 / 100 * i), 30 * sin(2 * 3.1415926536 / 100 * i));
+	}
+	glEnd();
+	glPopMatrix(); 
+	glPushMatrix();
+	glTranslatef(-100, -37, 245);  //(-100, -37, -55)
+	glScalef(2.5, 2.5, 0.3);
+	glutSolidCube(20.0);
+	glPopMatrix();
+
+	//window
+	glPushMatrix();
+	glTranslatef(-194, -32, 180);  //(-194,-32,-120)
+	glScalef(0.6, 0.2, 5.0);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-198, 0, 228);  //(-198,0,-72)
+	glScalef(0.2, 3.0, 0.2);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-198, 0, 132);  //(-198,0,-168)
+	glScalef(0.2, 3.0, 0.2);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(-194, 32, 180);  //(-194,32,-120)
+	glScalef(0.6, 0.2, 5.0);
+	glutSolidCube(20.0);
+	glPopMatrix();
+
+	//light
+	glPushMatrix();
+	glTranslatef(0, 90, 180);  //(0,90,-120)
+	glScalef(0.2, 1.0, 0.2);
+	glutSolidCube(20.0);
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslatef(0, 80, 180);  //(0,80,-120)
+	GLUquadric* pObj2;
+	pObj2 = gluNewQuadric();
+	glRotatef(90.0, 1.0, 0.0, 0.0);
+	glPushMatrix();
+	gluCylinder(pObj2, 30, 30, 20, 32, 5);
+	glPopMatrix();
+	glPopMatrix();
+
+	/*glutSwapBuffers();
+	angle++;*/
 
 
 	glPopMatrix();
@@ -179,6 +261,33 @@ void reshape(int w, int h) // Resize the GL Window. w=width, h=height
 	glFrustum(-200., 200., -100., 100., 300., 800.);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+}
+
+void keyboard(unsigned char key, int x,int y)
+{
+	switch (key)
+	{
+	case'\033'://press 'esc' to quit
+		exit(0);
+		break;
+
+		// TODO:
+		// Add keyboard control here
+	case'1':
+		printf("the chair will roteta");
+		option = 1;
+		break;
+	default:
+		printf("error\n");
+	}
+}
+
+void idle()
+{
+	if (option == 1) {
+		Sleep(5);
+		angle = 2.5;
+	}
 }
 
 
@@ -199,6 +308,8 @@ void main(int argc, char** argv)
 	keyboard stroke */
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
+	glutKeyboardFunc(keyboard);
+	glutIdleFunc(idle);
 
 	/*Enter the GLUT event processing loop which never returns.
 	it will call different registered CALLBACK according
