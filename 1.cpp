@@ -58,117 +58,118 @@ void display(void) // Here's Where We Do All The Drawing
 	glColor3f(0.5, 0.6, 0.6);
 	glBegin(GL_QUADS);
 	glNormal3f(0.0, 0.0, 1.0);
-	glVertex3f(200.0, 100.0, 0.0);
-	glVertex3f(-200.0, 100.0, 0.0);
-	glVertex3f(-200.0, -100.0, 0.0);
-	glVertex3f(200.0, -100.0, 0.0);
+	glVertex3f(200.0, 100.0, -300.0);
+	glVertex3f(-200.0, 100.0, -300.0);
+	glVertex3f(-200.0, -100.0, -300.0);
+	glVertex3f(200.0, -100.0, -300.0);
 	glEnd();
 
 	glColor3f(0.5, 0.5, 0.5);
 	glBegin(GL_QUADS);
 	glNormal3f(0.0, 1.0, 0.0);
-	glVertex3f(200.0, -100.0, 300.0);
 	glVertex3f(200.0, -100.0, 0.0);
+	glVertex3f(200.0, -100.0, -300.0);
+	glVertex3f(-200.0, -100.0, -300.0);
 	glVertex3f(-200.0, -100.0, 0.0);
-	glVertex3f(-200.0, -100.0, 300.0);
 	glEnd();
 
 	glColor3f(0.7, 0.7, 0.9);
 	glBegin(GL_QUADS);
 	glNormal3f(0.0, -1.0, 0.0);
-	glVertex3f(200.0, 100.0, 300.0);
-	glVertex3f(-200.0, 100.0, 300.0);
-	glVertex3f(-200.0, 100.0, 0.0);
 	glVertex3f(200.0, 100.0, 0.0);
+	glVertex3f(-200.0, 100.0, 0.0);
+	glVertex3f(-200.0, 100.0, -300.0);
+	glVertex3f(200.0, 100.0, -300.0);
 	glEnd();
 
 	glColor3f(0.5, 0.6, 0.6);
 	glBegin(GL_QUADS);
 	glNormal3f(1.0, 0.0, 0.0);
-	glVertex3f(-200.0, -100.0, 300.0);
 	glVertex3f(-200.0, -100.0, 0.0);
+	glVertex3f(-200.0, -100.0, -300.0);
+	glVertex3f(-200.0, 100.0, -300.0);
 	glVertex3f(-200.0, 100.0, 0.0);
-	glVertex3f(-200.0, 100.0, 300.0);
 	glEnd();
 
 	glColor3f(0.5, 0.6, 0.6);
 	glBegin(GL_QUADS);
 	glNormal3f(-1.0, 0.0, 0.0);
-	glVertex3f(200.0, -100.0, 300.0);
-	glVertex3f(200.0, 100.0, 300.0);
-	glVertex3f(200.0, 100.0, 0.0);
 	glVertex3f(200.0, -100.0, 0.0);
+	glVertex3f(200.0, 100.0, 0.0);
+	glVertex3f(200.0, 100.0, -300.0);
+	glVertex3f(200.0, -100.0, -300.0);
 	glEnd();
 	//bed
 	glColor3f(0.7, 0.7, 0.5);
 	glPushMatrix();
-	glTranslatef(100.0, -60.0, 10.0);//(100,-60,-290)
+	glTranslatef(100.0, -60.0, -290.0);//(100,-60,-290)
 	glScalef(6.5, 4.0, 1.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(100.0, -85.0, 130);//(100,-85,-170)
+	glTranslatef(100.0, -85.0, -170);//(100,-85,-170)
 	glScalef(6.0, 1.5, 12.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslated(100,-65,170);//(100,-65,-130)
+	glTranslated(100, -65, -130);//(100,-65,-130)
 	glScalef(5.0, 0.5, 5.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(100,-63,65);//(100,-63,-235)
+	glTranslatef(100, -63, -235);//(100,-63,-235)
 	glScalef(3.0, 0.7, 1.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	//air-condition
 	glPushMatrix();
-	glTranslatef(-100.0, 60.0, 25.0); //(-100,60,-275)
+	glTranslatef(-100.0, 60.0, -275.0); //(-100,60,-275)
 	glScalef(5.0, 1.5, 2.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	//Table
 	glPushMatrix();
-	glTranslatef(-100, -30, 40);  //(-100,-30,-260)
+	glTranslatef(-100, -30, -260);  //(-100,-30,-260)
 	glScalef(8.0, 0.4, 6.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-175, -67, 40);  //(-175,-67,-260)
+	glTranslatef(-175, -67, -260);  //(-175,-67,-260)
 	glScalef(0.5, 3.3, 6.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-40, -67, 40);  //(-40,-67,-260)
+	glTranslatef(-40, -67, -260);  //(-40,-67,-260)
 	glScalef(2.0, 3.3, 6.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-145, -70, 15);  //(-145,-70,-285)
+	glTranslatef(-145, -70, -285);  //(-145,-70,-285)
 	glScalef(3.0, 0.4, 4.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-119, -50, 15);  //(-119,-50,-285)
+	glTranslatef(-119, -50, -285);  //(-119,-50,-285)
 	glScalef(0.4, 2.0, 4.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	//chair
 	glPushMatrix();
-	glTranslatef(-100, -60, 220);  //(-100,-60,-80)
+	glTranslatef(-100, -60, -80);  //(-100,-60,-80)
+	glRotatef(angle, 0.0, 1.0, 0.0);
 	glScalef(2.5, 0.3, 2.5);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-100, -80, 220);  //(-100,-80,-80)
+	glTranslatef(-100, -80, -80);  //(-100,-80,-80)
 	glScalef(0.2, 1.8, 0.2);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-100, -97, 220);  //(-100,-97,-80)
+	glTranslatef(-100, -97, -80);  //(-100,-97,-80)
 	GLUquadric* pObj;
 	pObj = gluNewQuadric();
 	glRotatef(90.0, 1.0, 0.0, 0.0);
@@ -179,7 +180,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glPopMatrix();
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-100, -100, 220);  //(-100,-100,-80)
+	glTranslatef(-100, -100, -80);  //(-100,-100,-80)
 	glRotatef(90.0, 1.0, 0.0, 0.0);
 	int i;
 	glBegin(GL_POLYGON);
@@ -190,7 +191,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glEnd();
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-100, -97, 220);  //(-100,-97,-80)
+	glTranslatef(-100, -97, -80);  //(-100,-97,-80)
 	glRotatef(90.0, 1.0, 0.0, 0.0);
 	glBegin(GL_POLYGON);
 	for (i = 0; i < 100; i++)
@@ -198,44 +199,46 @@ void display(void) // Here's Where We Do All The Drawing
 		glVertex2f(30 * cos(2 * 3.1415926536 / 100 * i), 30 * sin(2 * 3.1415926536 / 100 * i));
 	}
 	glEnd();
-	glPopMatrix(); 
+	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-100, -37, 245);  //(-100, -37, -55)
+	glTranslatef(-100, -60, -80);  //(-100,-60,-80)
+	glRotatef(angle, 0.0, 1.0, 0.0);
+	glTranslatef(0, 23, 25);  //(-100, -37, -55)
 	glScalef(2.5, 2.5, 0.3);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	//window
 	glPushMatrix();
-	glTranslatef(-194, -32, 180);  //(-194,-32,-120)
+	glTranslatef(-194, -32, -120);  //(-194,-32,-120)
 	glScalef(0.6, 0.2, 5.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-198, 0, 228);  //(-198,0,-72)
+	glTranslatef(-198, 0, -72);  //(-198,0,-72)
 	glScalef(0.2, 3.0, 0.2);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-198, 0, 132);  //(-198,0,-168)
+	glTranslatef(-198, 0, -168);  //(-198,0,-168)
 	glScalef(0.2, 3.0, 0.2);
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslatef(-194, 32, 180);  //(-194,32,-120)
+	glTranslatef(-194, 32, -120);  //(-194,32,-120)
 	glScalef(0.6, 0.2, 5.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	//light
 	glPushMatrix();
-	glTranslatef(0, 90, 180);  //(0,90,-120)
+	glTranslatef(0, 90, -120);  //(0,90,-120)
 	glScalef(0.2, 1.0, 0.2);
 	glutSolidCube(20.0);
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslatef(0, 80, 180);  //(0,80,-120)
+	glTranslatef(0, 80, -120);  //(0,80,-120)
 	GLUquadric* pObj2;
 	pObj2 = gluNewQuadric();
 	glRotatef(90.0, 1.0, 0.0, 0.0);
@@ -243,7 +246,7 @@ void display(void) // Here's Where We Do All The Drawing
 	gluCylinder(pObj2, 30, 30, 20, 32, 5);
 	glPopMatrix();
 	glPopMatrix();
-
+	glPopMatrix();
 	/*glutSwapBuffers();
 	angle++;*/
 
@@ -263,7 +266,7 @@ void reshape(int w, int h) // Resize the GL Window. w=width, h=height
 	glLoadIdentity();
 }
 
-void keyboard(unsigned char key, int x,int y)
+void keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
@@ -286,8 +289,9 @@ void idle()
 {
 	if (option == 1) {
 		Sleep(5);
-		angle = 2.5;
+		angle += 1;
 	}
+	glutPostRedisplay();
 }
 
 
@@ -299,7 +303,7 @@ void main(int argc, char** argv)
 
 	glutInitWindowSize(1200, 600);
 	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Assignment 1");			
+	glutCreateWindow("Assignment 1");
 
 	init();
 
