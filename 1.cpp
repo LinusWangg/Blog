@@ -5,8 +5,12 @@
 #include<math.h>
 float l1 = 0.25;
 float ll = 1.0;
+float light = 0.0;
 float angle = 0.0;
 int option = 0;
+float r = 64, g = 224, b = 208;
+float windowangle = 0.0;
+float rocketx = -250;
 
 void init(void) // All Setup For OpenGL Goes Here
 {
@@ -24,15 +28,17 @@ void display(void) // Here's Where We Do All The Drawing
 	glPushMatrix();
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	GLfloat lightpos[] = { 0.f, 100.f, -450.f, ll };			// 可设动画
-	GLfloat light0_mat1[] = { 0.2, 0.2, 0.2, 0.3f };
-	GLfloat light0_diff[] = { 1.0, 1.0, 1.0, 0.3 };
-	GLfloat lightpos2[] = { 0.0,0.0,0.0,ll };
-	GLfloat light1_mat1[] = { 0.1,0.1,0.1,0.3 };
-	GLfloat light1_diff[] = { 0.1,0.1,0.1,0.3 };
+	GLfloat lightpos[] = { 0.f, 70.f, -480.f, light };
+	GLfloat light0_mat1[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light0_diff[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat lightpos2[] = { -195.0,0.0,-400.0,ll };
+	GLfloat light1_mat1[] = { 0.0, 0.0, 0.0, 0.0f };
+	GLfloat light1_diff[] = { 1.0,1.0,1.0,1.0 };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light0_mat1);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diff);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 	glLightfv(GL_LIGHT1, GL_POSITION, lightpos2);
 	glLightfv(GL_LIGHT1, GL_AMBIENT, light1_mat1);
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diff);
@@ -54,8 +60,8 @@ void display(void) // Here's Where We Do All The Drawing
 	glPushMatrix();
 	static GLfloat wall_mat[] = { 1.f, 1.f, 1.f, 1.f };
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, wall_mat);
-
-	glColor3f(0.5, 0.6, 0.6);
+	//back
+	glColor3ub(255, 228, 196);
 	glBegin(GL_QUADS);
 	glNormal3f(0.0, 0.0, 1.0);
 	glVertex3f(200.0, 100.0, -300.0);
@@ -63,8 +69,8 @@ void display(void) // Here's Where We Do All The Drawing
 	glVertex3f(-200.0, -100.0, -300.0);
 	glVertex3f(200.0, -100.0, -300.0);
 	glEnd();
-
-	glColor3f(0.5, 0.5, 0.5);
+	//bot
+	glColor3ub(255, 165, 0);
 	glBegin(GL_QUADS);
 	glNormal3f(0.0, 1.0, 0.0);
 	glVertex3f(200.0, -100.0, 0.0);
@@ -72,8 +78,8 @@ void display(void) // Here's Where We Do All The Drawing
 	glVertex3f(-200.0, -100.0, -300.0);
 	glVertex3f(-200.0, -100.0, 0.0);
 	glEnd();
-
-	glColor3f(0.7, 0.7, 0.9);
+	//top
+	glColor3ub(224,255,255);
 	glBegin(GL_QUADS);
 	glNormal3f(0.0, -1.0, 0.0);
 	glVertex3f(200.0, 100.0, 0.0);
@@ -81,8 +87,8 @@ void display(void) // Here's Where We Do All The Drawing
 	glVertex3f(-200.0, 100.0, -300.0);
 	glVertex3f(200.0, 100.0, -300.0);
 	glEnd();
-
-	glColor3f(0.5, 0.6, 0.6);
+	//left
+	glColor3ub(255, 228, 196);
 	glBegin(GL_QUADS);
 	glNormal3f(1.0, 0.0, 0.0);
 	glVertex3f(-200.0, -100.0, 0.0);
@@ -90,8 +96,8 @@ void display(void) // Here's Where We Do All The Drawing
 	glVertex3f(-200.0, 100.0, -300.0);
 	glVertex3f(-200.0, 100.0, 0.0);
 	glEnd();
-
-	glColor3f(0.5, 0.6, 0.6);
+	//right
+	//glColor3ub(135, 206 ,235);
 	glBegin(GL_QUADS);
 	glNormal3f(-1.0, 0.0, 0.0);
 	glVertex3f(200.0, -100.0, 0.0);
@@ -100,22 +106,26 @@ void display(void) // Here's Where We Do All The Drawing
 	glVertex3f(200.0, -100.0, -300.0);
 	glEnd();
 	//bed
-	glColor3f(0.7, 0.7, 0.5);
+
+	glColor3ub(255,228,225);
 	glPushMatrix();
 	glTranslatef(100.0, -60.0, -290.0);//(100,-60,-290)
 	glScalef(6.5, 4.0, 1.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
+	glColor3ub(190, 190, 190);
 	glPushMatrix();
 	glTranslatef(100.0, -85.0, -170);//(100,-85,-170)
 	glScalef(6.0, 1.5, 12.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
+	glColor3ub(224, 255, 255);
 	glPushMatrix();
 	glTranslated(100, -65, -130);//(100,-65,-130)
 	glScalef(5.0, 0.5, 5.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
+	glColor3ub(135, 206, 250);
 	glPushMatrix();
 	glTranslatef(100, -63, -235);//(100,-63,-235)
 	glScalef(3.0, 0.7, 1.5);
@@ -123,6 +133,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glPopMatrix();
 
 	//air-condition
+	glColor3ub(224,255, 255);
 	glPushMatrix();
 	glTranslatef(-100.0, 60.0, -275.0); //(-100,60,-275)
 	glScalef(5.0, 1.5, 2.5);
@@ -130,6 +141,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glPopMatrix();
 
 	//Table
+	glColor3ub(255,255,224);
 	glPushMatrix();
 	glTranslatef(-100, -30, -260);  //(-100,-30,-260)
 	glScalef(8.0, 0.4, 6.5);
@@ -157,6 +169,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glPopMatrix();
 
 	//chair
+	glColor3ub(176 ,196, 222);
 	glPushMatrix();
 	glTranslatef(-100, -60, -80);  //(-100,-60,-80)
 	glRotatef(angle, 0.0, 1.0, 0.0);
@@ -164,10 +177,12 @@ void display(void) // Here's Where We Do All The Drawing
 	glutSolidCube(20.0);
 	glPopMatrix();
 	glPushMatrix();
+	glColor3ub(255,255,255);
 	glTranslatef(-100, -80, -80);  //(-100,-80,-80)
 	glScalef(0.2, 1.8, 0.2);
 	glutSolidCube(20.0);
 	glPopMatrix();
+	glColor3ub(105,105,105);
 	glPushMatrix();
 	glTranslatef(-100, -97, -80);  //(-100,-97,-80)
 	GLUquadric* pObj;
@@ -201,6 +216,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glEnd();
 	glPopMatrix();
 	glPushMatrix();
+	glColor3ub(176, 196, 222);
 	glTranslatef(-100, -60, -80);  //(-100,-60,-80)
 	glRotatef(angle, 0.0, 1.0, 0.0);
 	glTranslatef(0, 23, 25);  //(-100, -37, -55)
@@ -229,14 +245,28 @@ void display(void) // Here's Where We Do All The Drawing
 	glScalef(0.6, 0.2, 5.0);
 	glutSolidCube(20.0);
 	glPopMatrix();
+	
+	glColor3ub(r,g,b);
+	glPushMatrix();
+	glTranslatef(-195,0,-72);
+	glRotatef(windowangle, 0.0, -1.0, 0.0);
+	glBegin(GL_QUADS);
+	glNormal3f(0, 0, 1);
+	glVertex3f(0, 31, -96);
+	glVertex3f(0, 31, 0);
+	glVertex3f(0, -31, 0);
+	glVertex3f(0, -31, -96);
+	glEnd();
+	glPopMatrix();
 
 	//light
+	glColor3ub(190,190,190);
 	glPushMatrix();
 	glTranslatef(0, 90, -120);  //(0,90,-120)
 	glScalef(0.2, 1.0, 0.2);
 	glutSolidCube(20.0);
 	glPopMatrix();
-
+	glColor3ub(255,231,186);
 	glPushMatrix();
 	glTranslatef(0, 80, -120);  //(0,80,-120)
 	GLUquadric* pObj2;
@@ -250,13 +280,22 @@ void display(void) // Here's Where We Do All The Drawing
 	/*glutSwapBuffers();
 	angle++;*/
 
+	//rocket
+	glColor3ub(255, 255, 255);
+	glPushMatrix();
+	glTranslatef(rocketx, 0, -120);
+	glScalef(1.0, 1.0, 1.0);
+	glutSolidCube(20.0);
+	glPopMatrix();
+
+
 
 	glPopMatrix();
 	glFlush();
 	glutSwapBuffers();
 }
 
-void reshape(int w, int h) // Resize the GL Window. w=width, h=height
+void reshape(int w, int h)
 {
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
@@ -270,15 +309,36 @@ void keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case'\033'://press 'esc' to quit
+	case'\033':
 		exit(0);
 		break;
-
-		// TODO:
-		// Add keyboard control here
 	case'1':
 		printf("the chair will roteta");
 		option = 1;
+		break;
+	case'2':
+		printf("turn on the light");
+		option = 2;
+		break;
+	case'3':
+		printf("turn off the light");
+		option = 3;
+		break;
+	case'4':
+		printf("open the window");
+		option = 4;
+		break;
+	case'5':
+		printf("close the window");
+		option = 5;
+		break;
+	case'6':
+		printf("Rocket on");
+		option = 6;
+		break;
+	case'7':
+		printf("Rocket off");
+		option = 7;
 		break;
 	default:
 		printf("error\n");
@@ -289,7 +349,40 @@ void idle()
 {
 	if (option == 1) {
 		Sleep(5);
-		angle += 1;
+		angle++;
+		angle = (int(angle) % 360);
+	}
+	if (option == 2) {
+		Sleep(5);
+		light = 0.7;
+	}
+	if (option == 3) {
+		Sleep(5);
+		light = 0.0;
+	}
+	if (option == 4) {
+		Sleep(5);
+		if (windowangle <= 110)
+			windowangle++;
+	}
+	if (option == 5) {
+		Sleep(5);
+		if (windowangle > 0)
+			windowangle--;
+	}
+	if (option == 6) {
+		Sleep(5);
+		if (windowangle >= 90 && rocketx <= -200)
+			rocketx++;
+		else if (rocketx > -200 && rocketx <= 180)
+			rocketx++;
+	}
+	if (option == 7) {
+		Sleep(5);
+		if (windowangle >= 90 && rocketx >= -200)
+			rocketx--;
+		if (windowangle <= 90 && rocketx <= 200 && rocketx >= -180)
+			rocketx--;
 	}
 	glutPostRedisplay();
 }
