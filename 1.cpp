@@ -7,6 +7,7 @@ float l1 = 0.25;
 float ll = 1.0;
 float light = 0.0;
 float angle = 0.0;
+float angle_clock = 0.0;
 int option = 0;
 float r = 64, g = 224, b = 208;
 float windowangle = 0.0;
@@ -28,13 +29,13 @@ void display(void) // Here's Where We Do All The Drawing
 	glPushMatrix();
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	GLfloat lightpos[] = { 0.f, 70.f, -480.f, light };
+	GLfloat lightpos[] = { 0.f, 70.f, -420.f, light };
 	GLfloat light0_mat1[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat light0_diff[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat lightpos2[] = { -195.0,0.0,-400.0,ll };
+	GLfloat lightpos2[] = { -195.0,0.0,-420.0,ll };
 	GLfloat light1_mat1[] = { 0.0, 0.0, 0.0, 0.0f };
-	GLfloat light1_diff[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat light1_diff[] = { 1.0,1.0,1.0,0.5 };
 	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light0_mat1);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diff);
@@ -47,7 +48,7 @@ void display(void) // Here's Where We Do All The Drawing
 	GLfloat mat_ambient[] = { 0.2,0.2,0.2,1.0 };
 	GLfloat mat_diffuse[] = { 0.9,0.9,0.9,1.0 };
 	GLfloat mat_specular[] = { 0.3,0.3,0.3,1.0 };
-	GLfloat high_shininess[] = { 20.0 };
+	GLfloat high_shininess[] = { 0.0 };
 	GLfloat high_mat[] = { l1,l1,l1,1.0 };
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
@@ -281,15 +282,74 @@ void display(void) // Here's Where We Do All The Drawing
 	angle++;*/
 
 	//rocket
-	glColor3ub(255, 255, 255);
+	glColor3ub(255, 0, 0);
 	glPushMatrix();
 	glTranslatef(rocketx, 0, -120);
-	glScalef(1.0, 1.0, 1.0);
+	glScalef(2.0, 1.0, 1.0);
 	glutSolidCube(20.0);
+	glColor3ub(255, 0, 0);
+	glPushMatrix();
+	glBegin(GL_TRIANGLES);
+	glVertex3f(10, 10, -10);
+	glVertex3f(10, 10, 10);
+	glVertex3f(20, 0, 0);
+
+	glVertex3f(10, 10, -10);
+	glVertex3f(10, -10, -10);
+	glVertex3f(20, 0, 0);
+
+	glVertex3f(10, 10, 10);
+	glVertex3f(10, 10, 10);
+	glVertex3f(20, 0, 0);
+
+	glVertex3f(10, -10, -10);
+	glVertex3f(10, -10, 10);
+	glVertex3f(20, 0, 0);
+	glEnd();
+	glPopMatrix();
 	glPopMatrix();
 
-
-
+	//clock
+	glColor3ub(255, 255, 255);
+	glPushMatrix();
+	glTranslatef(100,60,-290);
+	glBegin(GL_POLYGON);
+	for (i = 0; i < 100; i++)
+	{
+		glVertex2f(30 * cos(2 * 3.1415926536 / 100 * i), 30 * sin(2 * 3.1415926536 / 100 * i));
+	}
+	glEnd();
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(100, 60, -295);
+	//glRotatef(90.0, 1.0, 0.0, 0.0);
+	GLUquadric* pObj3;
+	pObj3 = gluNewQuadric();
+	glPushMatrix();
+	gluCylinder(pObj2, 30, 30, 10, 32, 5);
+	glPopMatrix();
+	glPopMatrix();
+	glColor3ub(0, 0, 0);
+	glPushMatrix();
+	glTranslatef(100, 60, -288.5);
+	glRotatef(angle_clock, 0.0, 0.0, -1.0);
+	glTranslatef(0, 13, 0);
+	glScalef(0.2, 1.3, 0.15);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	glPushMatrix();
+	glTranslatef(100, 60, -285.5);
+	glRotatef(angle_clock/12, 0.0, 0.0, -1.0);
+	glTranslatef(0, 8, 0);
+	glScalef(0.2, 0.8, 0.15);
+	glutSolidCube(20.0);
+	glPopMatrix();
+	
+	angle_clock++;
+	if (angle_clock == 12 * 360)
+	{
+		angle_clock = 0;
+	}
 	glPopMatrix();
 	glFlush();
 	glutSwapBuffers();
@@ -349,8 +409,11 @@ void idle()
 {
 	if (option == 1) {
 		Sleep(5);
-		angle++;
-		angle = (int(angle) % 360);
+		if (windowangle <= 20)
+		{
+			angle++;
+			angle = (int(angle) % 360);
+		}
 	}
 	if (option == 2) {
 		Sleep(5);
@@ -362,19 +425,19 @@ void idle()
 	}
 	if (option == 4) {
 		Sleep(5);
-		if (windowangle <= 110)
+		if (windowangle <= 90 && (rocketx >= -76||rocketx<=-200))
 			windowangle++;
 	}
 	if (option == 5) {
 		Sleep(5);
-		if (windowangle > 0)
+		if (windowangle > 0 && rocketx >= -76)
 			windowangle--;
 	}
 	if (option == 6) {
 		Sleep(5);
-		if (windowangle >= 90 && rocketx <= -200)
+		if (windowangle >= 80 && rocketx <= -200)
 			rocketx++;
-		else if (rocketx > -200 && rocketx <= 180)
+		else if (rocketx > -200 && rocketx <= 160)
 			rocketx++;
 	}
 	if (option == 7) {
