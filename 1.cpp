@@ -12,6 +12,9 @@ int option = 0;
 float r = 64, g = 224, b = 208;
 float windowangle = 0.0;
 float rocketx = -250;
+float anglex = 0.0;
+float angley = 0.0;
+float lx = 0.0, ly = 0.0, lz = 0.0;
 
 void init(void) // All Setup For OpenGL Goes Here
 {
@@ -33,6 +36,7 @@ void display(void) // Here's Where We Do All The Drawing
 	GLfloat light0_mat1[] = { 0.0, 0.0, 0.0, 1.0 };
 	GLfloat light0_diff[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+
 	GLfloat lightpos2[] = { -195.0,0.0,-420.0,ll };
 	GLfloat light1_mat1[] = { 0.0, 0.0, 0.0, 0.0f };
 	GLfloat light1_diff[] = { 1.0,1.0,1.0,0.5 };
@@ -56,6 +60,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
 	glMaterialfv(GL_FRONT, GL_EMISSION, high_mat);
+
 
 	glTranslatef(0.0, 0.0, -300.0);
 	glPushMatrix();
@@ -299,7 +304,7 @@ void display(void) // Here's Where We Do All The Drawing
 	glVertex3f(20, 0, 0);
 
 	glVertex3f(10, 10, 10);
-	glVertex3f(10, 10, 10);
+	glVertex3f(10, -10, 10);
 	glVertex3f(20, 0, 0);
 
 	glVertex3f(10, -10, -10);
@@ -351,16 +356,30 @@ void display(void) // Here's Where We Do All The Drawing
 		angle_clock = 0;
 	}
 	glPopMatrix();
+
 	glFlush();
 	glutSwapBuffers();
 }
-
+GLint Winwidth, Winheight;
 void reshape(int w, int h)
 {
+	if (h == 0)
+		h = 1;
+	Winwidth = w;
+	Winheight = h;
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glFrustum(-200., 200., -100., 100., 300., 800.);
+	GLfloat faspect;
+	faspect = (GLfloat)w / (GLfloat)h;
+
+	gluPerspective(37.0, faspect, 0.1, 800.0);
+	if (anglex == 0 && angley == 0)
+	{
+		gluLookAt(lx, ly, lz, lx, ly, lz - 1.0, 0, 1, 0);
+	}
+	else
+		gluLookAt(lx, ly, lz, lx - sin(anglex), ly + tan(angley), lz - cos(anglex), 0, 1, 0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -450,6 +469,61 @@ void idle()
 	glutPostRedisplay();
 }
 
+void SpecialKey(GLint key, GLint x, GLint y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		Sleep(5);
+		lx -= 5*sin(anglex);
+		lz -= 5*cos(anglex);
+		break;
+	case GLUT_KEY_LEFT:
+		Sleep(5);
+		lx -= 5*cos(anglex);
+		lz += 5*sin(anglex);
+		break;
+	case GLUT_KEY_DOWN:
+		Sleep(5);
+		lx += 5*sin(anglex);
+		lz += 5*cos(anglex);
+		break;
+	case GLUT_KEY_RIGHT:
+		Sleep(5);
+		lx += 5*cos(anglex);
+		lz -= 5*sin(anglex);
+		break;
+	case GLUT_KEY_F1:
+		Sleep(5);
+		anglex = anglex + 0.01;
+		break;
+	case GLUT_KEY_F2:
+		Sleep(5);
+		anglex = anglex - 0.01;
+		break;
+	case GLUT_KEY_F3:
+		Sleep(5);
+		angley = angley + 0.01;
+		break;
+	case GLUT_KEY_F4:
+		Sleep(5);
+		angley = angley - 0.01;
+		break;
+	case GLUT_KEY_F5:
+		Sleep(5);
+		ly = ly + 5;
+		break;
+	case GLUT_KEY_F6:
+		Sleep(5);
+		ly = ly - 5;
+		break;
+	default:
+		break;
+	}
+	reshape(Winwidth, Winheight);
+	glutPostRedisplay();
+}
+
 
 
 void main(int argc, char** argv)
@@ -468,6 +542,7 @@ void main(int argc, char** argv)
 	keyboard stroke */
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
+	glutSpecialFunc(SpecialKey);
 	glutKeyboardFunc(keyboard);
 	glutIdleFunc(idle);
 
