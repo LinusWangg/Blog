@@ -1,553 +1,1213 @@
-#include <stdlib.h>
-#include<stdio.h>
-#include<windows.h>
-#include <GL/glut.h>
-#include<math.h>
-float l1 = 0.25;
-float ll = 1.0;
-float light = 0.0;
-float angle = 0.0;
-float angle_clock = 0.0;
-int option = 0;
-float r = 64, g = 224, b = 208;
-float windowangle = 0.0;
-float rocketx = -250;
-float anglex = 0.0;
-float angley = 0.0;
-float lx = 0.0, ly = 0.0, lz = 0.0;
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<fstream>
+using namespace std;
+string reserve[15] = { "program","const","var","procedure","begin","end","if","then","else","while","do","call","read","write","odd" };
+string line, temp;
+int pos = 0;
+int row = 0;
+int num = 0;
+struct syntx {
+	string symbol;
+	string identity;
+	int line;
+	int col;
+}Syn[10000];
+bool const_analyse();
+bool factor_analyse();
+bool exp_analyse();
+bool term_analyse();
+bool lexp_analyse();
+bool statement_analyse();
+bool body_analyse();
+bool proc_analyse();
+bool vardecl_analyse();
+bool condecl_analyse();
+bool block_analyse();
+bool prog_analyse();
 
-void init(void) // All Setup For OpenGL Goes Here
+void Getchar(char& ch)
 {
-	glEnable(GL_NORMALIZE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHT1);
-	glFrontFace(GL_CCW);
-	glEnable(GL_COLOR_MATERIAL);
+	ch = line[pos];
+	pos++;
 }
 
-void display(void) // Here's Where We Do All The Drawing
+void GetFirstChar(char& ch)
 {
-	glPushMatrix();
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	GLfloat lightpos[] = { 0.f, 70.f, -420.f, light };
-	GLfloat light0_mat1[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat light0_diff[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-
-	GLfloat lightpos2[] = { -195.0,0.0,-420.0,ll };
-	GLfloat light1_mat1[] = { 0.0, 0.0, 0.0, 0.0f };
-	GLfloat light1_diff[] = { 1.0,1.0,1.0,0.5 };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light0_mat1);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diff);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-	glLightfv(GL_LIGHT1, GL_POSITION, lightpos2);
-	glLightfv(GL_LIGHT1, GL_AMBIENT, light1_mat1);
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diff);
-
-	GLfloat no_mat[] = { 0.0,0.0,0.0,1.0 };
-	GLfloat mat_ambient[] = { 0.2,0.2,0.2,1.0 };
-	GLfloat mat_diffuse[] = { 0.9,0.9,0.9,1.0 };
-	GLfloat mat_specular[] = { 0.3,0.3,0.3,1.0 };
-	GLfloat high_shininess[] = { 0.0 };
-	GLfloat high_mat[] = { l1,l1,l1,1.0 };
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
-	glMaterialfv(GL_FRONT, GL_EMISSION, high_mat);
-
-
-	glTranslatef(0.0, 0.0, -300.0);
-	glPushMatrix();
-	static GLfloat wall_mat[] = { 1.f, 1.f, 1.f, 1.f };
-	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, wall_mat);
-	//back
-	glColor3ub(255, 228, 196);
-	glBegin(GL_QUADS);
-	glNormal3f(0.0, 0.0, 1.0);
-	glVertex3f(200.0, 100.0, -300.0);
-	glVertex3f(-200.0, 100.0, -300.0);
-	glVertex3f(-200.0, -100.0, -300.0);
-	glVertex3f(200.0, -100.0, -300.0);
-	glEnd();
-	//bot
-	glColor3ub(255, 165, 0);
-	glBegin(GL_QUADS);
-	glNormal3f(0.0, 1.0, 0.0);
-	glVertex3f(200.0, -100.0, 0.0);
-	glVertex3f(200.0, -100.0, -300.0);
-	glVertex3f(-200.0, -100.0, -300.0);
-	glVertex3f(-200.0, -100.0, 0.0);
-	glEnd();
-	//top
-	glColor3ub(224,255,255);
-	glBegin(GL_QUADS);
-	glNormal3f(0.0, -1.0, 0.0);
-	glVertex3f(200.0, 100.0, 0.0);
-	glVertex3f(-200.0, 100.0, 0.0);
-	glVertex3f(-200.0, 100.0, -300.0);
-	glVertex3f(200.0, 100.0, -300.0);
-	glEnd();
-	//left
-	glColor3ub(255, 228, 196);
-	glBegin(GL_QUADS);
-	glNormal3f(1.0, 0.0, 0.0);
-	glVertex3f(-200.0, -100.0, 0.0);
-	glVertex3f(-200.0, -100.0, -300.0);
-	glVertex3f(-200.0, 100.0, -300.0);
-	glVertex3f(-200.0, 100.0, 0.0);
-	glEnd();
-	//right
-	//glColor3ub(135, 206 ,235);
-	glBegin(GL_QUADS);
-	glNormal3f(-1.0, 0.0, 0.0);
-	glVertex3f(200.0, -100.0, 0.0);
-	glVertex3f(200.0, 100.0, 0.0);
-	glVertex3f(200.0, 100.0, -300.0);
-	glVertex3f(200.0, -100.0, -300.0);
-	glEnd();
-	//bed
-
-	glColor3ub(255,228,225);
-	glPushMatrix();
-	glTranslatef(100.0, -60.0, -290.0);//(100,-60,-290)
-	glScalef(6.5, 4.0, 1.0);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glColor3ub(190, 190, 190);
-	glPushMatrix();
-	glTranslatef(100.0, -85.0, -170);//(100,-85,-170)
-	glScalef(6.0, 1.5, 12.0);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glColor3ub(224, 255, 255);
-	glPushMatrix();
-	glTranslated(100, -65, -130);//(100,-65,-130)
-	glScalef(5.0, 0.5, 5.0);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glColor3ub(135, 206, 250);
-	glPushMatrix();
-	glTranslatef(100, -63, -235);//(100,-63,-235)
-	glScalef(3.0, 0.7, 1.5);
-	glutSolidCube(20.0);
-	glPopMatrix();
-
-	//air-condition
-	glColor3ub(224,255, 255);
-	glPushMatrix();
-	glTranslatef(-100.0, 60.0, -275.0); //(-100,60,-275)
-	glScalef(5.0, 1.5, 2.5);
-	glutSolidCube(20.0);
-	glPopMatrix();
-
-	//Table
-	glColor3ub(255,255,224);
-	glPushMatrix();
-	glTranslatef(-100, -30, -260);  //(-100,-30,-260)
-	glScalef(8.0, 0.4, 6.5);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-175, -67, -260);  //(-175,-67,-260)
-	glScalef(0.5, 3.3, 6.5);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-40, -67, -260);  //(-40,-67,-260)
-	glScalef(2.0, 3.3, 6.5);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-145, -70, -285);  //(-145,-70,-285)
-	glScalef(3.0, 0.4, 4.0);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-119, -50, -285);  //(-119,-50,-285)
-	glScalef(0.4, 2.0, 4.0);
-	glutSolidCube(20.0);
-	glPopMatrix();
-
-	//chair
-	glColor3ub(176 ,196, 222);
-	glPushMatrix();
-	glTranslatef(-100, -60, -80);  //(-100,-60,-80)
-	glRotatef(angle, 0.0, 1.0, 0.0);
-	glScalef(2.5, 0.3, 2.5);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glColor3ub(255,255,255);
-	glTranslatef(-100, -80, -80);  //(-100,-80,-80)
-	glScalef(0.2, 1.8, 0.2);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glColor3ub(105,105,105);
-	glPushMatrix();
-	glTranslatef(-100, -97, -80);  //(-100,-97,-80)
-	GLUquadric* pObj;
-	pObj = gluNewQuadric();
-	glRotatef(90.0, 1.0, 0.0, 0.0);
-	glPushMatrix();
-	gluCylinder(pObj, 30, 30, 6, 32, 5);
-	//glScalef(1.5, 0.3, 1.5);
-	//glutSolidCube(20.0);
-	glPopMatrix();
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-100, -100, -80);  //(-100,-100,-80)
-	glRotatef(90.0, 1.0, 0.0, 0.0);
-	int i;
-	glBegin(GL_POLYGON);
-	for (i = 0; i < 100; i++)
+	ch = line[pos];
+	pos++;
+	while (ch == ' ' || ch == '\t')
 	{
-		glVertex2f(30 * cos(2 * 3.1415926536 / 100 * i), 30 * sin(2 * 3.1415926536 / 100 * i));
+		ch = line[pos];
+		pos++;
 	}
-	glEnd();
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-100, -97, -80);  //(-100,-97,-80)
-	glRotatef(90.0, 1.0, 0.0, 0.0);
-	glBegin(GL_POLYGON);
-	for (i = 0; i < 100; i++)
-	{
-		glVertex2f(30 * cos(2 * 3.1415926536 / 100 * i), 30 * sin(2 * 3.1415926536 / 100 * i));
-	}
-	glEnd();
-	glPopMatrix();
-	glPushMatrix();
-	glColor3ub(176, 196, 222);
-	glTranslatef(-100, -60, -80);  //(-100,-60,-80)
-	glRotatef(angle, 0.0, 1.0, 0.0);
-	glTranslatef(0, 23, 25);  //(-100, -37, -55)
-	glScalef(2.5, 2.5, 0.3);
-	glutSolidCube(20.0);
-	glPopMatrix();
-
-	//window
-	glPushMatrix();
-	glTranslatef(-194, -32, -120);  //(-194,-32,-120)
-	glScalef(0.6, 0.2, 5.0);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-198, 0, -72);  //(-198,0,-72)
-	glScalef(0.2, 3.0, 0.2);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-198, 0, -168);  //(-198,0,-168)
-	glScalef(0.2, 3.0, 0.2);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(-194, 32, -120);  //(-194,32,-120)
-	glScalef(0.6, 0.2, 5.0);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	
-	glColor3ub(r,g,b);
-	glPushMatrix();
-	glTranslatef(-195,0,-72);
-	glRotatef(windowangle, 0.0, -1.0, 0.0);
-	glBegin(GL_QUADS);
-	glNormal3f(0, 0, 1);
-	glVertex3f(0, 31, -96);
-	glVertex3f(0, 31, 0);
-	glVertex3f(0, -31, 0);
-	glVertex3f(0, -31, -96);
-	glEnd();
-	glPopMatrix();
-
-	//light
-	glColor3ub(190,190,190);
-	glPushMatrix();
-	glTranslatef(0, 90, -120);  //(0,90,-120)
-	glScalef(0.2, 1.0, 0.2);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glColor3ub(255,231,186);
-	glPushMatrix();
-	glTranslatef(0, 80, -120);  //(0,80,-120)
-	GLUquadric* pObj2;
-	pObj2 = gluNewQuadric();
-	glRotatef(90.0, 1.0, 0.0, 0.0);
-	glPushMatrix();
-	gluCylinder(pObj2, 30, 30, 20, 32, 5);
-	glPopMatrix();
-	glPopMatrix();
-	glPopMatrix();
-	/*glutSwapBuffers();
-	angle++;*/
-
-	//rocket
-	glColor3ub(255, 0, 0);
-	glPushMatrix();
-	glTranslatef(rocketx, 0, -120);
-	glScalef(2.0, 1.0, 1.0);
-	glutSolidCube(20.0);
-	glColor3ub(255, 0, 0);
-	glPushMatrix();
-	glBegin(GL_TRIANGLES);
-	glVertex3f(10, 10, -10);
-	glVertex3f(10, 10, 10);
-	glVertex3f(20, 0, 0);
-
-	glVertex3f(10, 10, -10);
-	glVertex3f(10, -10, -10);
-	glVertex3f(20, 0, 0);
-
-	glVertex3f(10, 10, 10);
-	glVertex3f(10, -10, 10);
-	glVertex3f(20, 0, 0);
-
-	glVertex3f(10, -10, -10);
-	glVertex3f(10, -10, 10);
-	glVertex3f(20, 0, 0);
-	glEnd();
-	glPopMatrix();
-	glPopMatrix();
-
-	//clock
-	glColor3ub(255, 255, 255);
-	glPushMatrix();
-	glTranslatef(100,60,-290);
-	glBegin(GL_POLYGON);
-	for (i = 0; i < 100; i++)
-	{
-		glVertex2f(30 * cos(2 * 3.1415926536 / 100 * i), 30 * sin(2 * 3.1415926536 / 100 * i));
-	}
-	glEnd();
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(100, 60, -295);
-	//glRotatef(90.0, 1.0, 0.0, 0.0);
-	GLUquadric* pObj3;
-	pObj3 = gluNewQuadric();
-	glPushMatrix();
-	gluCylinder(pObj2, 30, 30, 10, 32, 5);
-	glPopMatrix();
-	glPopMatrix();
-	glColor3ub(0, 0, 0);
-	glPushMatrix();
-	glTranslatef(100, 60, -288.5);
-	glRotatef(angle_clock, 0.0, 0.0, -1.0);
-	glTranslatef(0, 13, 0);
-	glScalef(0.2, 1.3, 0.15);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	glPushMatrix();
-	glTranslatef(100, 60, -285.5);
-	glRotatef(angle_clock/12, 0.0, 0.0, -1.0);
-	glTranslatef(0, 8, 0);
-	glScalef(0.2, 0.8, 0.15);
-	glutSolidCube(20.0);
-	glPopMatrix();
-	
-	angle_clock++;
-	if (angle_clock == 12 * 360)
-	{
-		angle_clock = 0;
-	}
-	glPopMatrix();
-
-	glFlush();
-	glutSwapBuffers();
-}
-GLint Winwidth, Winheight;
-void reshape(int w, int h)
-{
-	if (h == 0)
-		h = 1;
-	Winwidth = w;
-	Winheight = h;
-	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	GLfloat faspect;
-	faspect = (GLfloat)w / (GLfloat)h;
-
-	gluPerspective(37.0, faspect, 0.1, 800.0);
-	if (anglex == 0 && angley == 0)
-	{
-		gluLookAt(lx, ly, lz, lx, ly, lz - 1.0, 0, 1, 0);
-	}
-	else
-		gluLookAt(lx, ly, lz, lx - sin(anglex), ly + tan(angley), lz - cos(anglex), 0, 1, 0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 }
 
-void keyboard(unsigned char key, int x, int y)
+void backchar(char& ch)
 {
-	switch (key)
+	ch = NULL;
+	pos--;
+}
+
+bool isAlpha(char c)
+{
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+		return true;
+	return false;
+}
+
+bool isDigit(char c)
+{
+	if (c >= '0' && c <= '9')
+		return true;
+	return false;
+}
+
+string isreserve(string temp)
+{
+	for (int i = 0; i < 15; i++)
 	{
-	case'\033':
+		if (temp == reserve[i])
+			return reserve[i];
+	}
+	return "identity";
+}
+
+void word()
+{
+	fstream infile, outfile;
+	infile.open("1.txt", ios::in);
+	outfile.open("2.txt", ios::out);
+	if (infile.fail())
+	{
+		outfile << "error" << endl;
 		exit(0);
-		break;
-	case'1':
-		printf("the chair will roteta");
-		option = 1;
-		break;
-	case'2':
-		printf("turn on the light");
-		option = 2;
-		break;
-	case'3':
-		printf("turn off the light");
-		option = 3;
-		break;
-	case'4':
-		printf("open the window");
-		option = 4;
-		break;
-	case'5':
-		printf("close the window");
-		option = 5;
-		break;
-	case'6':
-		printf("Rocket on");
-		option = 6;
-		break;
-	case'7':
-		printf("Rocket off");
-		option = 7;
-		break;
-	default:
-		printf("error\n");
 	}
+	char ch = ' ';
+	int i = 0;
+	while (!infile.eof())
+	{
+		int flag_for_num = 0;
+		row++;
+		getline(infile, line, '\n');
+		outfile << line << endl;
+		while (pos < line.size())
+		{
+			GetFirstChar(ch);
+			if (isAlpha(ch))
+			{
+				temp.push_back(ch);
+				while (isAlpha(ch) || isDigit(ch))
+				{
+					Getchar(ch);
+					temp.push_back(ch);
+				}
+				backchar(ch);
+				temp.pop_back();
+				outfile << isreserve(temp) << ":" << temp;
+				Syn[num].symbol = isreserve(temp);
+				Syn[num].identity = temp;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				temp.clear();
+				outfile << endl;
+			}
+			else if (isDigit(ch))
+			{
+				temp.push_back(ch);
+				while (isDigit(ch))
+				{
+					Getchar(ch);
+					temp.push_back(ch);
+					if (isAlpha(ch))
+					{
+						while (ch != '\t' && ch != ' ' && ch != '\n' && ch != '\0')
+						{
+							Getchar(ch);
+							temp.push_back(ch);
+						}
+						backchar(ch);
+						outfile << "Error Not Legal!" << row << "行" << pos << "列" << "---" << temp << endl;
+						temp.clear();
+						flag_for_num = 1;
+					}
+				}
+				if (flag_for_num == 0)
+				{
+					backchar(ch);
+					temp.pop_back();
+					Syn[num].symbol = "num";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "num:" << temp;
+					temp.clear();
+					outfile << endl;
+				}
+				flag_for_num = 0;
+			}
+			else if (ch == '=')
+			{
+				Syn[num].symbol = "lop";
+				Syn[num].identity = ch;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				outfile << "Equal: " << ch << endl;
+			}
+			else if (ch == '+')
+			{
+				Syn[num].symbol = "aop";
+				Syn[num].identity = ch;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				outfile << "Plus: " << ch << endl;
+			}
+			else if (ch == '-')
+			{
+				Syn[num].symbol = "aop";
+				Syn[num].identity = ch;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				outfile << "Minus: " << ch << endl;
+			}
+			else if (ch == '*')
+			{
+				temp.push_back(ch);
+				Getchar(ch);
+				if (ch == '*')
+				{
+					temp.push_back(ch);
+					Syn[num].symbol = "mop";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "involution: " << temp << endl;
+					temp.clear();
+				}
+				else
+				{
+					backchar(ch);
+					Syn[num].symbol = "mop";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "Multiple: " << temp << endl;
+					temp.clear();
+				}
+			}
+			else if (ch == '/')
+			{
+				Syn[num].symbol = "mop";
+				Syn[num].identity = ch;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				outfile << "divide: " << ch;
+			}
+			else if (ch == '>')
+			{
+				temp.push_back(ch);
+				Getchar(ch);
+				if (ch == '=')
+				{
+					temp.push_back(ch);
+					Syn[num].symbol = "lop";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "Notless: " << temp << endl;
+					temp.clear();
+				}
+				else
+				{
+					backchar(ch);
+					Syn[num].symbol = "lop";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "more: " << temp << endl;
+					temp.clear();
+				}
+			}
+			else if (ch == '<')
+			{
+				temp.push_back(ch);
+				Getchar(ch);
+				if (ch == '=')
+				{
+					temp.push_back(ch);
+					Syn[num].symbol = "lop";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "Notmore: " << temp << endl;
+					temp.clear();
+				}
+				else if (ch == '>')
+				{
+					temp.push_back(ch);
+					Syn[num].symbol = "lop";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "Notequal: " << temp << endl;
+					temp.clear();
+				}
+				else
+				{
+					backchar(ch);
+					Syn[num].symbol = "less";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "less: " << temp << endl;
+					temp.clear();
+				}
+			}
+			else if (ch == ':')
+			{
+				temp.push_back(ch);
+				Getchar(ch);
+				if (ch == '=')
+				{
+					temp.push_back(ch);
+					Syn[num].symbol = "Assign";
+					Syn[num].identity = temp;
+					Syn[num].line = row;
+					Syn[num].col = pos;
+					num++;
+					outfile << "Assign: " << temp << endl;
+					temp.clear();
+				}
+				else
+				{
+					temp.push_back(ch);
+					while (ch != '\t' && ch != ' ' && ch != '\n' && ch != '\0')
+					{
+						Getchar(ch);
+						temp.push_back(ch);
+					}
+					backchar(ch);
+					outfile << "Error Not Defined!" << row << "行" << pos << "列" << "---" << temp << endl;
+					temp.clear();
+				}
+			}
+			else if (ch == ',')
+			{
+				Syn[num].symbol = "comma";
+				Syn[num].identity = ch;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				outfile << "comma: " << ch << endl;
+			}
+			else if (ch == ';')
+			{
+				Syn[num].symbol = "semicolon";
+				Syn[num].identity = ch;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				outfile << "semicolon: " << ch << endl;
+			}
+			else if (ch == '(')
+			{
+				Syn[num].symbol = "leftbrackets";
+				Syn[num].identity = ch;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				outfile << "leftbrackets: " << ch << endl;
+			}
+			else if (ch == ')')
+			{
+				Syn[num].symbol = "rightbrackets";
+				Syn[num].identity = ch;
+				Syn[num].line = row;
+				Syn[num].col = pos;
+				num++;
+				outfile << "rightbrackets: " << ch << endl;
+			}
+			else
+			{
+				temp.push_back(ch);
+				while (ch != '\t' && ch != ' ' && ch != '\n' && ch != '\0')
+				{
+					Getchar(ch);
+					temp.push_back(ch);
+				}
+				backchar(ch);
+				outfile << "Error Not Defined!" << row << "行" << pos << "列" << "---" << temp << endl;
+				temp.clear();
+			}
+		}
+		outfile << "-------------------------------------" << endl;
+		line.clear();
+		pos = 0;
+	}
+	infile.close();
+	outfile.close();
 }
 
-void idle()
+int analyse_num = 0;
+
+bool const_analyse()
 {
-	if (option == 1) {
-		Sleep(5);
-		if (windowangle <= 20)
+	if (Syn[analyse_num].symbol == "identity")
+	{
+		analyse_num++;
+		if (Syn[analyse_num].symbol == "Assign")
 		{
-			angle++;
-			angle = (int(angle) % 360);
+			analyse_num++;
+			if (Syn[analyse_num].symbol == "num")
+			{
+				return 1;
+			}
+			else
+			{
+				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "赋值号后缺少数字！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "const后缺少定义变量！" << endl;
+			return 0;
 		}
 	}
-	if (option == 2) {
-		Sleep(5);
-		light = 0.7;
-	}
-	if (option == 3) {
-		Sleep(5);
-		light = 0.0;
-	}
-	if (option == 4) {
-		Sleep(5);
-		if (windowangle <= 90 && (rocketx >= -76||rocketx<=-200))
-			windowangle++;
-	}
-	if (option == 5) {
-		Sleep(5);
-		if (windowangle > 0 && rocketx >= -76)
-			windowangle--;
-	}
-	if (option == 6) {
-		Sleep(5);
-		if (windowangle >= 80 && rocketx <= -200)
-			rocketx++;
-		else if (rocketx > -200 && rocketx <= 160)
-			rocketx++;
-	}
-	if (option == 7) {
-		Sleep(5);
-		if (windowangle >= 90 && rocketx >= -200)
-			rocketx--;
-		if (windowangle <= 90 && rocketx <= 200 && rocketx >= -180)
-			rocketx--;
-	}
-	glutPostRedisplay();
-}
-
-void SpecialKey(GLint key, GLint x, GLint y)
-{
-	switch (key)
+	else
 	{
-	case GLUT_KEY_UP:
-		Sleep(5);
-		lx -= 5*sin(anglex);
-		lz -= 5*cos(anglex);
-		break;
-	case GLUT_KEY_LEFT:
-		Sleep(5);
-		lx -= 5*cos(anglex);
-		lz += 5*sin(anglex);
-		break;
-	case GLUT_KEY_DOWN:
-		Sleep(5);
-		lx += 5*sin(anglex);
-		lz += 5*cos(anglex);
-		break;
-	case GLUT_KEY_RIGHT:
-		Sleep(5);
-		lx += 5*cos(anglex);
-		lz -= 5*sin(anglex);
-		break;
-	case GLUT_KEY_F1:
-		Sleep(5);
-		anglex = anglex + 0.01;
-		break;
-	case GLUT_KEY_F2:
-		Sleep(5);
-		anglex = anglex - 0.01;
-		break;
-	case GLUT_KEY_F3:
-		Sleep(5);
-		angley = angley + 0.01;
-		break;
-	case GLUT_KEY_F4:
-		Sleep(5);
-		angley = angley - 0.01;
-		break;
-	case GLUT_KEY_F5:
-		Sleep(5);
-		ly = ly + 5;
-		break;
-	case GLUT_KEY_F6:
-		Sleep(5);
-		ly = ly - 5;
-		break;
-	default:
-		break;
+		cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "标识符错误！" << endl;
+		return 0;
 	}
-	reshape(Winwidth, Winheight);
-	glutPostRedisplay();
 }
 
-
-
-void main(int argc, char** argv)
+bool factor_analyse()
 {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+	int now_num = 0;
+	if (Syn[analyse_num].symbol == "identity")
+	{
+		return 1;
+	}
+	else if (Syn[analyse_num].symbol == "num")
+	{
+		return 1;
+	}
+	else if (Syn[analyse_num].symbol == "leftbrackets")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		int temp = exp_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+			if (Syn[analyse_num].symbol != "rightbrackets")
+			{
+				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "缺少右括号！" << endl;
+				return 0;
+			}
+			else
+			{
+				return 1;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
+			return 0;
+		}
+	}
+}
 
-	glutInitWindowSize(1200, 600);
-	glutInitWindowPosition(100, 100);
-	glutCreateWindow("Assignment 1");
+bool exp_analyse()
+{
+	int now_num = 0;
+	if (Syn[analyse_num].identity == "+" || Syn[analyse_num].identity == "-")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+	}
+	int temp = term_analyse();
+	if (temp == 0)
+	{
+		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是term！" << endl;
+		return 0;
+	}
+	else
+	{
+		analyse_num++;
+		while (Syn[analyse_num].symbol == "aop")
+		{
+			analyse_num++;
+			int temp = term_analyse();
+			if (temp == 0)
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是term！" << endl;
+				return 0;
+			}
+			else
+			{
+				analyse_num++;
+			}
+		}
+		analyse_num--;
+		return 1;
+	}
+}
 
-	init();
+bool term_analyse()
+{
+	int now_num = analyse_num;
+	int temp = factor_analyse();
+	if (temp == 1)
+	{
+		analyse_num++;
+		if (Syn[analyse_num].symbol != "mop")
+		{
+			analyse_num--;
+			return 1;
+		}
+		while (Syn[analyse_num].symbol == "mop")
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			int temp2 = factor_analyse();
+			if (temp2 == 1)
+			{
+				analyse_num++;
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是factor！" << endl;
+				return 0;
+			}
+		}
+		analyse_num--;
+		return 1;
+	}
+	else
+	{
+		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是factor！" << endl;
+		return 0;
+	}
+}
 
-	/*Register different CALLBACK function for GLUT to response
-	with different events, e.g. window sizing, mouse click or
-	keyboard stroke */
-	glutReshapeFunc(reshape);
-	glutDisplayFunc(display);
-	glutSpecialFunc(SpecialKey);
-	glutKeyboardFunc(keyboard);
-	glutIdleFunc(idle);
+bool lexp_analyse()
+{
+	int now_num = analyse_num;
+	if (Syn[analyse_num].symbol == "odd")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		int temp = exp_analyse();
+		if (temp == 1)
+		{
+			return 1;
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
+			return 0;
+		}
+	}
+	else
+	{
+		int temp = exp_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			if (Syn[analyse_num].symbol == "lop")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				int temp2 = exp_analyse();
+				if (temp2 == 1)
+				{
+					return 1;
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
+					return 0;
+				}
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是factor！" << endl;
+			}
+		}
+	}
+}
 
-	/*Enter the GLUT event processing loop which never returns.
-	it will call different registered CALLBACK according
-	to different events. */
-	glutMainLoop();
+bool statement_analyse()
+{
+	int now_num = 0;
+	if (Syn[analyse_num].symbol == "identity")
+	{
+		now_num = analyse_num;
+		int temp = const_analyse();
+		if (temp == 1)
+		{
+			return 1;
+		}
+	}
+	else if (Syn[analyse_num].symbol == "if")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		int temp = lexp_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			if (Syn[analyse_num].symbol == "then")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				int temp2 = statement_analyse();
+				if (temp2 == 1)
+				{
+					analyse_num++;
+					if (Syn[analyse_num].symbol == "else")
+					{
+						analyse_num++;
+						now_num = analyse_num;
+						int temp3 = statement_analyse();
+						if (temp3 == 1)
+						{
+							return 1;
+						}
+						else
+						{
+							cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是Statement！" << endl;
+							return 0;
+						}
+					}
+					else
+					{
+						analyse_num--;
+						return 1;
+					}
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是Statement！" << endl;
+					return 0;
+				}
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是THEN！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是Statement！" << endl;
+			return 0;
+		}
+	}
+	else if (Syn[analyse_num].symbol == "while")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		int temp = lexp_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			if (Syn[analyse_num].symbol == "do")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				int temp2 = statement_analyse();
+				if (temp2 == 1)
+				{
+					return 1;
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是Statement！" << endl;
+					return 0;
+				}
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是do！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是LEXP！" << endl;
+			return 0;
+		}
+	}
+	else if (Syn[analyse_num].symbol == "call")
+	{
+		analyse_num++;;
+		now_num = analyse_num;
+		if (Syn[analyse_num].symbol == "identity")
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			if (Syn[analyse_num].identity == "(")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				if (Syn[analyse_num].identity == ")")
+				{
+					return 1;
+				}
+				else
+				{
+					now_num = analyse_num;
+					int temp = exp_analyse();
+					if (temp == 1)
+					{
+						analyse_num++;
+						while (Syn[analyse_num].identity == ",")
+						{
+							analyse_num++;
+							now_num = analyse_num;
+							int temp2 = exp_analyse();
+							if (temp2 == 1)
+							{
+								analyse_num++;
+							}
+							else
+							{
+								cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
+								return 0;
+							}
+						}
+						now_num = analyse_num-1;
+						if (Syn[analyse_num].identity == ")")
+						{
+							return 1;
+						}
+						else
+						{
+							cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少右括号！" << endl;
+							return 0;
+						}
+					}
+					else
+					{
+						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
+						return 0;
+					}
+				}
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少左括号！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是ID！" << endl;
+			return 0;
+		}
+	}
+	else if (Syn[analyse_num].symbol == "read")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		if (Syn[analyse_num].identity == "(")
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			if (Syn[analyse_num].symbol == "identity")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				while (Syn[analyse_num].identity == ",")
+				{
+					analyse_num++;
+					now_num = analyse_num;
+					if (Syn[analyse_num].symbol == "identity")
+					{
+						analyse_num++;
+						now_num = analyse_num;
+					}
+					else
+					{
+						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是ID！" << endl;
+						return 0;
+					}
+				}
+				if (Syn[analyse_num].identity == ")")
+				{
+					return 1;
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是右括号！" << endl;
+					return 0;
+				}
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是ID！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num-1].line << "行" << Syn[now_num-1].col << "列" << "语法错误！不是左括号！" << endl;
+			return 0;
+		}
+	}
+	else if (Syn[analyse_num].symbol == "write")
+	{
+		analyse_num++;;
+		now_num = analyse_num;
+		if (Syn[analyse_num].identity == "(")
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			int temp = exp_analyse();
+			if (temp == 1)
+			{
+				analyse_num++;
+				while (Syn[analyse_num].identity == ",")
+				{
+					now_num = analyse_num;
+					analyse_num++;
+					int temp2 = exp_analyse();
+					if (temp2 == 1)
+					{
+						analyse_num++;
+					}
+					else
+					{
+						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
+						return 0;
+					}
+				}
+				now_num = analyse_num;
+				if (Syn[analyse_num].identity == ")")
+				{
+					return 1;
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少右括号！" << endl;
+					return 0;
+				}
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少左括号！" << endl;
+			return 0;
+		}
+	}
+	else {
+		now_num = analyse_num;
+		int temp = body_analyse();
+		if (temp == 1)
+		{
+			return 1;
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少body！" << endl;
+			return 0;
+		}
+	}
+}
+
+bool body_analyse()
+{
+	int now_num = analyse_num;
+	if (Syn[analyse_num].symbol == "begin")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		int temp = statement_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			while (Syn[analyse_num].identity == ";")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				if (Syn[analyse_num].symbol == "end")
+				{
+					break;
+				}
+				int temp2 = statement_analyse();
+				if (temp2 == 1)
+				{
+					analyse_num++;
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！statement错误！" << endl;
+					return 0;
+				}
+			}
+			if (Syn[analyse_num].symbol == "end")
+			{
+				return 1;
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少end！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！statement错误！" << endl;
+			return 0;
+		}
+	}
+	else
+	{
+		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！statement错误！" << endl;
+		return 0;
+	}
+}
+
+bool proc_analyse()
+{
+	int now_num = analyse_num;
+	if (Syn[analyse_num].symbol == "procedure")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		if (Syn[analyse_num].symbol == "identity")
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			if (Syn[analyse_num].identity == "(")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				if (Syn[analyse_num].symbol == "identity")
+				{
+					analyse_num++;
+					now_num = analyse_num;
+					while (Syn[analyse_num].identity == ",")
+					{
+						analyse_num++;
+						now_num = analyse_num;
+						if (Syn[analyse_num].symbol == "identity")
+						{
+							analyse_num++;
+						}
+						else
+						{
+							cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
+							return 0;
+						}
+					}
+				}
+				if (Syn[analyse_num].identity == ")")
+				{
+					analyse_num++;
+					now_num = analyse_num;
+					if (Syn[analyse_num].identity == ";")
+					{
+						analyse_num++;
+						now_num = analyse_num;
+						int temp = block_analyse();
+						if (temp == 1)
+						{
+							analyse_num++;
+							while (Syn[analyse_num].identity == ";")
+							{
+								analyse_num++;
+								now_num = analyse_num;
+								int temp2 = proc_analyse();
+								if (temp2 == 1)
+								{
+									analyse_num++;
+									now_num = analyse_num;
+								}
+								else
+								{
+									cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少proc！" << endl;
+									return 0;
+								}
+							}
+							analyse_num--;
+							return 1;
+						}
+						else
+						{
+							cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少block！" << endl;
+							return 0;
+						}
+					}
+					else
+					{
+						return 1;
+					}
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少右括号！" << endl;
+					return 0;
+				}
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少左括号！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
+			return 0;
+		}
+	}
+	else
+	{
+		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少procedure！" << endl;
+		return 0;
+	}
+}
+
+bool vardecl_analyse()
+{
+	int now_num = analyse_num;
+	if (Syn[analyse_num].symbol == "var")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		if (Syn[analyse_num].symbol == "identity")
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			while (Syn[analyse_num].identity == ",")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				if (Syn[analyse_num].symbol == "identity")
+				{
+					analyse_num++;
+					now_num = analyse_num;
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
+					return 0;
+				}
+			}
+			if (Syn[analyse_num].identity == ";")
+			{
+				return 1;
+			}
+			else
+			{
+				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "缺少;！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
+			return 0;
+		}
+	}
+	else
+	{
+		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少var！" << endl;
+		return 0;
+	}
+}
+
+bool condecl_analyse() 
+{
+	int now_num = analyse_num;
+	if (Syn[analyse_num].symbol == "const")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		int temp = const_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			while (Syn[analyse_num].identity == ",")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				int temp2 = const_analyse();
+				if (temp2 == 1)
+				{
+					analyse_num++;
+					now_num = analyse_num;
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！const错误！" << endl;
+					return 0;
+				}
+			}
+			if (Syn[analyse_num].identity == ";")
+			{
+				return 1;
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少;！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！const错误！" << endl;
+			return 0;
+		}
+	}
+	else
+	{
+		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少const！" << endl;
+		return 0;
+	}
+}
+
+bool block_analyse()
+{
+	int now_num = analyse_num;
+	if (Syn[analyse_num].identity == "const")
+	{
+		int temp = condecl_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！const错误！" << endl;
+			return 0;
+		}
+	}
+	now_num = analyse_num;
+	if (Syn[analyse_num].identity == "var")
+	{
+		int temp = vardecl_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！var错误！" << endl;
+			return 0;
+		}
+	}
+	now_num = analyse_num;
+	if (Syn[analyse_num].identity == "procedure")
+	{
+		int temp = proc_analyse();
+		if (temp == 1)
+		{
+			analyse_num++;
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！proc错误！" << endl;
+			return 0;
+		}
+	}
+	int temp = body_analyse();
+	if (temp == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！body错误！" << endl;
+		return 0;
+	}
+}
+
+bool prog_analyse()
+{
+	int now_num = analyse_num;
+	if (Syn[analyse_num].symbol == "program")
+	{
+		analyse_num++;
+		now_num = analyse_num;
+		if (Syn[analyse_num].symbol == "identity")
+		{
+			analyse_num++;
+			now_num = analyse_num;
+			if (Syn[analyse_num].identity == ";")
+			{
+				analyse_num++;
+				now_num = analyse_num;
+				int temp = block_analyse();
+				if (temp == 1)
+				{
+					cout << "编译成功" << endl;
+					return 1;
+				}
+				else
+				{
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！block出错！" << endl;
+					return 0;
+				}
+			}
+			else
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少;！" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
+			return 0;
+		}
+	}
+	else
+	{
+		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少program！" << endl;
+		return 0;
+	}
+}
+
+void Syn_analyse()
+{
+
+}
+
+int main()
+{
+	word();
+	for(int i=0;i<num;i++)
+	{
+		cout<<Syn[i].line<<" "<<Syn[i].col<<" "<<Syn[i].identity<<"--"<<Syn[i].symbol<<endl;
+	}
+	prog_analyse();
+	return 0;
 }

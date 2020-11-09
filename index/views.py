@@ -7,5 +7,5 @@ from django.shortcuts import render
 def hello(request):
     context          = {}
     context['hello'] = 'My Blog'
-    return render(request, 'index.html', context)
+    return render(request, 'gaimima.html', context)
 
