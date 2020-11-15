@@ -109,7 +109,7 @@ void word()
 				Syn[num].symbol = isreserve(temp);
 				Syn[num].identity = temp;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-temp.size();
 				num++;
 				temp.clear();
 				outfile << endl;
@@ -141,7 +141,7 @@ void word()
 					Syn[num].symbol = "num";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-temp.size();
 					num++;
 					outfile << "num:" << temp;
 					temp.clear();
@@ -154,7 +154,7 @@ void word()
 				Syn[num].symbol = "lop";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-1;
 				num++;
 				outfile << "Equal: " << ch << endl;
 			}
@@ -163,7 +163,7 @@ void word()
 				Syn[num].symbol = "aop";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-1;
 				num++;
 				outfile << "Plus: " << ch << endl;
 			}
@@ -172,7 +172,7 @@ void word()
 				Syn[num].symbol = "aop";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-1;
 				num++;
 				outfile << "Minus: " << ch << endl;
 			}
@@ -186,7 +186,7 @@ void word()
 					Syn[num].symbol = "mop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-2;
 					num++;
 					outfile << "involution: " << temp << endl;
 					temp.clear();
@@ -197,7 +197,7 @@ void word()
 					Syn[num].symbol = "mop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-1;
 					num++;
 					outfile << "Multiple: " << temp << endl;
 					temp.clear();
@@ -208,7 +208,7 @@ void word()
 				Syn[num].symbol = "mop";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-1;
 				num++;
 				outfile << "divide: " << ch;
 			}
@@ -222,7 +222,7 @@ void word()
 					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-2;
 					num++;
 					outfile << "Notless: " << temp << endl;
 					temp.clear();
@@ -233,7 +233,7 @@ void word()
 					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-1;
 					num++;
 					outfile << "more: " << temp << endl;
 					temp.clear();
@@ -249,7 +249,7 @@ void word()
 					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-2;
 					num++;
 					outfile << "Notmore: " << temp << endl;
 					temp.clear();
@@ -260,7 +260,7 @@ void word()
 					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-2;
 					num++;
 					outfile << "Notequal: " << temp << endl;
 					temp.clear();
@@ -271,7 +271,7 @@ void word()
 					Syn[num].symbol = "less";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-1;
 					num++;
 					outfile << "less: " << temp << endl;
 					temp.clear();
@@ -287,7 +287,7 @@ void word()
 					Syn[num].symbol = "Assign";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos;
+					Syn[num].col = pos-2;
 					num++;
 					outfile << "Assign: " << temp << endl;
 					temp.clear();
@@ -310,7 +310,7 @@ void word()
 				Syn[num].symbol = "comma";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-1;
 				num++;
 				outfile << "comma: " << ch << endl;
 			}
@@ -319,7 +319,7 @@ void word()
 				Syn[num].symbol = "semicolon";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-1;
 				num++;
 				outfile << "semicolon: " << ch << endl;
 			}
@@ -328,7 +328,7 @@ void word()
 				Syn[num].symbol = "leftbrackets";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-1;
 				num++;
 				outfile << "leftbrackets: " << ch << endl;
 			}
@@ -337,7 +337,7 @@ void word()
 				Syn[num].symbol = "rightbrackets";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos;
+				Syn[num].col = pos-1;
 				num++;
 				outfile << "rightbrackets: " << ch << endl;
 			}
@@ -558,11 +558,27 @@ bool statement_analyse()
 	int now_num = 0;
 	if (Syn[analyse_num].symbol == "identity")
 	{
+		analyse_num++;
 		now_num = analyse_num;
-		int temp = const_analyse();
-		if (temp == 1)
+		if (Syn[analyse_num].identity == ":=")
 		{
-			return 1;
+			analyse_num++;
+			now_num = analyse_num;
+			int temp = exp_analyse();
+			if (temp == 1)
+			{
+				return 1;
+			}
+			else
+			{
+				cout << Syn[now_num].line << "ÐÐ" << Syn[now_num].col << "ÁÐ" << "Óï·¨´íÎó£¡EXP´íÎó£¡" << endl;
+				return 0;
+			}
+		}
+		else
+		{
+			cout << Syn[now_num].line << "ÐÐ" << Syn[now_num].col << "ÁÐ" << "Óï·¨´íÎó£¡È±ÉÙ:=£¡" << endl;
+			return 0;
 		}
 	}
 	else if (Syn[analyse_num].symbol == "if")
@@ -863,6 +879,11 @@ bool body_analyse()
 				if (temp2 == 1)
 				{
 					analyse_num++;
+					if ((Syn[analyse_num].identity != ";" && Syn[analyse_num + 1].symbol != "end")&&(Syn[analyse_num].symbol!="end"))
+					{
+						cout << Syn[now_num].line << "ÐÐ" << Syn[now_num].col << "ÁÐ" << "Óï·¨´íÎó£¡È±ÉÙ;£¡" << endl;
+						return 0;
+					}
 				}
 				else
 				{
@@ -888,7 +909,7 @@ bool body_analyse()
 	}
 	else
 	{
-		cout << Syn[now_num].line << "ÐÐ" << Syn[now_num].col << "ÁÐ" << "Óï·¨´íÎó£¡statement´íÎó£¡" << endl;
+		cout << Syn[now_num].line << "ÐÐ" << Syn[now_num].col << "ÁÐ" << "Óï·¨´íÎó£¡È±ÉÙbegin£¡" << endl;
 		return 0;
 	}
 }
@@ -966,7 +987,8 @@ bool proc_analyse()
 					}
 					else
 					{
-						return 1;
+						cout << Syn[now_num].line << "ÐÐ" << Syn[now_num].col << "ÁÐ" << "Óï·¨´íÎó£¡È±ÉÙ;£¡" << endl;
+						return 0;
 					}
 				}
 				else
