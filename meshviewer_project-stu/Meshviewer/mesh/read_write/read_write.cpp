@@ -173,21 +173,20 @@ namespace MeshN {
 			cshh = fit->halfedge_handle_;
 			FacetHandle fh = mesh_->facet_handle(cshh);
 			const VertexHandle& vh0 = mesh_->vertex_handle(cshh);
+			double in = 80.0 / 20.0;
 			glBegin(GL_TRIANGLES);
 			do {
-				const VertexHandle& vh = mesh_->vertex_handle(cshh);;
-				if (Gosk[vh] > 30)
-					glColor3f(1.0, 0.0, 0.0);
-				if (Gosk[vh] > 15 && Gosk[vh] <= 30)
-					glColor3f(0.8, 0.2, 0.2);
-				if (Gosk[vh] > 0 && Gosk[vh] <= 15)
-					glColor3f(0.6, 0.4, 0.4);
-				if (Gosk[vh] > -15 && Gosk[vh] <= 0)
-					glColor3f(0.4, 0.6, 0.6);
-				if (Gosk[vh] > -30 && Gosk[vh] <= -15)
-					glColor3f(0.2, 0.8, 0.8);
-				if (Gosk[vh] <= -30)
-					glColor3f(0.0, 1.0, 1.0);
+				const VertexHandle& vh = mesh_->vertex_handle(cshh);
+				for (int i = 0; i < 19; i++)
+				{
+					if (Gosk[vh] > 40.0)
+						glColor3f(1.0, 0.3, 0.0);
+					else if (Gosk[vh] < -40.0)
+						glColor3f(0.0, 0.3, 1.0);
+					else if (Gosk[vh] < 40 - in * i && Gosk[vh]>40 - in * (i + 1))
+						glColor3f(1.0 - (i + 1) * 0.05, 0.3, 0.0 + (i + 1) * 0.05);
+				}
+				
 				glNormal3fv(mesh_->normal(fh) * orient);
 				glVertex3fv(mesh_->coord(vh));
 				cshh = mesh_->next_halfedge_handle(cshh);
