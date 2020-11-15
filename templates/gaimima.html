@@ -69,7 +69,7 @@
                         <line x1="12" y1="20" x2="12" y2="4"></line>
                         <line x1="6" y1="20" x2="6" y2="14"></line>
                     </svg>
-                    测试库（trace）
+                    申诉信息
                 </a>
             </li>
             <li class="nav-item">
@@ -183,7 +183,46 @@
     </div>
 </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-                <table id="trace-page"></table>
+        <div class="col-sm-5" id="so">
+             <div class="input-group">
+                 <input type="text" class="form-control" onkeydown="onKeyDown(event)"/>
+                 <span class="input-group-addon"><button>搜索   </button></span>
+             </div>
+</div>
+                <div class="bootstrap-table bootstrap4">
+      <div class="fixed-table-toolbar"></div>
+      
+      <div class="fixed-table-container" style="padding-bottom: 0px;">
+      <div class="fixed-table-header" style="display: none;"><table></table></div>
+      <div class="fixed-table-body">
+      <div class="fixed-table-loading table table-bordered table-hover" style="top: 48px; display: none;">
+      <span class="loading-wrap">
+      <span class="loading-text" style="font-size: 32px;">正在努力地加载数据中，请稍候</span>
+      <span class="animation-wrap"><span class="animation-dot"></span></span>
+      </span>
+    
+      </div>
+      <table id="trace-page" class="table table-bordered table-hover">
+      <thead class="">
+      <tr>
+      <th style="text-align: center; " data-field="index">
+      <div class="th-inner ">序号</div><div class="fht-cell"></div></th><th style="" data-field="student_id"><div class="th-inner ">学号</div><div class="fht-cell"></div></th><th style="" data-field="distance"><div class="th-inner ">申诉内容</div><div class="fht-cell"></div><div class="fht-cell"></div></th><th style="" data-field="date"><div class="th-inner ">日期</div><div class="fht-cell"></div></th><th style="" data-field="dtw"><div class="th-inner ">申诉处理情况</div><div class="fht-cell"></div></th><th style="text-align: center; " data-field="operation"><div class="th-inner ">操作</div><div class="fht-cell"></div></th></tr></thead><tbody><tr data-index="0">
+      <td style="text-align: center; ">1</td><td style=""><a data-placement="top" data-html="true" data-toggle="tooltip" title="" data-original-title="open_id: okiQ85BJOi1Ykf_1GSNQ0xJd_JI0<br />ip: 117.136.45.137">161830326</a><script>$("[data-toggle='tooltip']").tooltip()</script></td><td style="">早操打卡11.16出现错误，需要复查</td><td style="">2020-09-24</td><td style="">Finished</td><td style="text-align: center; "><a class="btn btn-sm btn-primary" href="/trace/5f6c33acdd24169eaf71ff87">信息回复</a><a class="btn btn-sm btn-primary" style="margin-left:10px;" href="/trace/compare/5f6c33acdd24169eaf71ff87/5f6498919c381e2fd6e08a2f">申诉状态修改</a><a class="btn btn-sm btn-danger" style="margin-left:10px;" onclick="kill('5f6c33acdd24169eaf71ff87')">删除</a></td></tr><tr data-index="1"
+      ><td style="text-align: center; ">2</td><td style=""><a data-placement="top" data-html="true" data-toggle="tooltip" title="" data-original-title="open_id: okiQ85BJOi1Ykf_1GSNQ0xJd_JI0<br />ip: 117.136.45.64">161810225</a><script>$("[data-toggle='tooltip']").tooltip()</script></td><td style="">我随便瞎写的</td><td style="">2020-10-10</td><td style="">unFinished</td><td style="text-align: center; "><a class="btn btn-sm btn-primary" href="/trace/5f81bc9cdd24169eaf71ff8d">信息回复</a><a class="btn btn-sm btn-primary" style="margin-left:10px;" href="/trace/compare/5f81bc9cdd24169eaf71ff8d/5f6498919c381e2fd6e08a2f">申诉状态修改</a><a class="btn btn-sm btn-danger" style="margin-left:10px;" onclick="kill('5f81bc9cdd24169eaf71ff8d')">删除</a></td></tr><tr data-index="2">
+      </td></tr></tbody></table></div>
+      <div class="fixed-table-footer"><table><thead><tr></tr></thead></table></div>
+      </div>
+      <div class="fixed-table-pagination" style=""><div class="float-left pagination-detail"><span class="pagination-info">
+      显示第 1 到第 2 条记录，总共 2 条记录
+      </span><span class="page-list" style="display: none;">每页显示 <span class="btn-group dropdown dropup">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+        <span class="page-size">
+        7
+        </span>
+        <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu"></div></span> 条记录</span></div><div class="float-right pagination"><ul class="pagination"><li class="page-item page-pre"><a class="page-link" aria-label="上一页" href="javascript:void(0)">‹</a></li><li class="page-item active"><a class="page-link" aria-label="第1页" href="javascript:void(0)">1</a></li><li class="page-item"><a class="page-link" aria-label="第2页" href="javascript:void(0)">2</a></li><li class="page-item page-next"><a class="page-link" aria-label="下一页" href="javascript:void(0)">›</a></li></ul></div></div>
+      </div>
         </main>
     </div>
 </div>
@@ -203,118 +242,7 @@
 <script>
     feather.replace();
 </script>
-<script>
-    $('#trace-page').bootstrapTable({
-        method : 'post',
-        url : "http://39.101.211.144:8088/trace/getPage",//请求路径
-        striped : true, //是否显示行间隔色
-        pageNumber : 1, //初始化加载第一页
-        pagination : true,//是否分页
-        sidePagination : 'client',//server:服务器端分页|client：前端分页
-        pageSize : 7,//单页记录数
-        pageList : [],//可选择单页记录数
-        showRefresh : false,//刷新按钮
-        search: false, //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
-        silent: true,
-        showToggle: false,
-        minimumCountColumns: 7,
-        queryParams : function (params) {
-            var temp = {
-                name:$('#search_name').val(),
-                tel:$('#search_tel').val()
-            };
-            return temp;
-        },
-        columns: [{
-            field: 'index',
-            title: '申诉时间',
-            align: 'center',
-        }, {
-            field: 'student_id',
-            title: '申诉者学号',
-            formatter: detail
-        }, {
-            field: 'open_id',
-            title: '申诉者学校',
-            visible: false
-        }, {
-            field: 'ip',
-            title: '申诉内容',
-            visible: false
-        }, {
-            field: 'distance',
-            title: '处理完成情况',
-        }, {
-            field: 'time_cost',
-            title: '处理人工号',
-        }]
-    })
 
-    //删除、编辑操作
-    function operation(value, row, index) {
-        var htm = "<a class=\"btn btn-sm btn-primary\" href=\"/trace/" + row.id + "\">查看地图</a>";
-        htm += "<a class=\"btn btn-sm btn-primary\"  style=\"margin-left:10px;\" href=\"/trace/compare/" + row.id + "/" + row.base_id + "\">基准比较</a>";
-        htm += "<a class=\"btn btn-sm btn-danger\"  style=\"margin-left:10px;\" onclick=\"kill('" + row.id + "')\">删除</a>";
-        return htm;
-    }
-    function detail(value, row, index) {
-        var div = "<a data-placement=\"top\" data-html=\"true\" data-toggle=\"tooltip\" title=\"open_id: " + row.open_id + "<br />ip: " + row.ip + "\">" + row.student_id + "</a>" + "<script>$(\"[data-toggle='tooltip']\").tooltip()<\/script>";
-        return div;
-    }
-
-    //查询按钮事件
-    $('#search_btn').click(function() {
-        $('#mytab').bootstrapTable('refresh', {
-            url : 'trace/getPage'
-        });
-    })
-
-    Date.prototype.Format = function (fmt) {
-        var o = {
-            "M+": this.getMonth() + 1, //月份
-            "d+": this.getDate(), //日
-            "H+": this.getHours(), //小时
-            "m+": this.getMinutes(), //分
-            "s+": this.getSeconds(), //秒
-            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-            "S": this.getMilliseconds() //毫秒
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    }
-
-    function kill(id) {
-        //init toastr
-        toastr.options = {
-            "closeButton": false,
-            "debug": false,
-            "positionClass": "toast-bottom-right",
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "3000",
-            "extendedTimeOut": "500",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        };
-        $.ajax({
-            //几个参数需要注意一下
-            type: "GET",//方法类型
-            dataType: "json",//预期服务器返回的数据类型
-            url: "/trace/delete/" + id,//url
-            success: function (res) {
-                toastr.success("删除路径成功！");
-                $('#trace-page').bootstrapTable('refresh');
-            },
-            error: function () {
-                toastr.error('删除路径失败！');
-            }
-        });
-    }
 
 </script>
 
