@@ -77,7 +77,7 @@ string isreserve(string temp)
 void word()
 {
 	fstream infile, outfile;
-	infile.open("1.txt", ios::in);
+	infile.open("source.txt", ios::in);
 	outfile.open("2.txt", ios::out);
 	if (infile.fail())
 	{
@@ -109,7 +109,7 @@ void word()
 				Syn[num].symbol = isreserve(temp);
 				Syn[num].identity = temp;
 				Syn[num].line = row;
-				Syn[num].col = pos-temp.size();
+				Syn[num].col = pos - temp.size();
 				num++;
 				temp.clear();
 				outfile << endl;
@@ -141,7 +141,7 @@ void word()
 					Syn[num].symbol = "num";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-temp.size();
+					Syn[num].col = pos - temp.size();
 					num++;
 					outfile << "num:" << temp;
 					temp.clear();
@@ -154,7 +154,7 @@ void word()
 				Syn[num].symbol = "lop";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos-1;
+				Syn[num].col = pos - 1;
 				num++;
 				outfile << "Equal: " << ch << endl;
 			}
@@ -163,7 +163,7 @@ void word()
 				Syn[num].symbol = "aop";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos-1;
+				Syn[num].col = pos - 1;
 				num++;
 				outfile << "Plus: " << ch << endl;
 			}
@@ -172,7 +172,7 @@ void word()
 				Syn[num].symbol = "aop";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos-1;
+				Syn[num].col = pos - 1;
 				num++;
 				outfile << "Minus: " << ch << endl;
 			}
@@ -186,7 +186,7 @@ void word()
 					Syn[num].symbol = "mop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-2;
+					Syn[num].col = pos - 2;
 					num++;
 					outfile << "involution: " << temp << endl;
 					temp.clear();
@@ -197,7 +197,7 @@ void word()
 					Syn[num].symbol = "mop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-1;
+					Syn[num].col = pos - 1;
 					num++;
 					outfile << "Multiple: " << temp << endl;
 					temp.clear();
@@ -208,7 +208,7 @@ void word()
 				Syn[num].symbol = "mop";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos-1;
+				Syn[num].col = pos - 1;
 				num++;
 				outfile << "divide: " << ch;
 			}
@@ -222,7 +222,7 @@ void word()
 					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-2;
+					Syn[num].col = pos - 2;
 					num++;
 					outfile << "Notless: " << temp << endl;
 					temp.clear();
@@ -233,7 +233,7 @@ void word()
 					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-1;
+					Syn[num].col = pos - 1;
 					num++;
 					outfile << "more: " << temp << endl;
 					temp.clear();
@@ -249,7 +249,7 @@ void word()
 					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-2;
+					Syn[num].col = pos - 2;
 					num++;
 					outfile << "Notmore: " << temp << endl;
 					temp.clear();
@@ -260,7 +260,7 @@ void word()
 					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-2;
+					Syn[num].col = pos - 2;
 					num++;
 					outfile << "Notequal: " << temp << endl;
 					temp.clear();
@@ -271,7 +271,7 @@ void word()
 					Syn[num].symbol = "less";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-1;
+					Syn[num].col = pos - 1;
 					num++;
 					outfile << "less: " << temp << endl;
 					temp.clear();
@@ -287,7 +287,7 @@ void word()
 					Syn[num].symbol = "Assign";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
-					Syn[num].col = pos-2;
+					Syn[num].col = pos - 2;
 					num++;
 					outfile << "Assign: " << temp << endl;
 					temp.clear();
@@ -310,7 +310,7 @@ void word()
 				Syn[num].symbol = "comma";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos-1;
+				Syn[num].col = pos - 1;
 				num++;
 				outfile << "comma: " << ch << endl;
 			}
@@ -319,7 +319,7 @@ void word()
 				Syn[num].symbol = "semicolon";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos-1;
+				Syn[num].col = pos - 1;
 				num++;
 				outfile << "semicolon: " << ch << endl;
 			}
@@ -328,7 +328,7 @@ void word()
 				Syn[num].symbol = "leftbrackets";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos-1;
+				Syn[num].col = pos - 1;
 				num++;
 				outfile << "leftbrackets: " << ch << endl;
 			}
@@ -337,7 +337,7 @@ void word()
 				Syn[num].symbol = "rightbrackets";
 				Syn[num].identity = ch;
 				Syn[num].line = row;
-				Syn[num].col = pos-1;
+				Syn[num].col = pos - 1;
 				num++;
 				outfile << "rightbrackets: " << ch << endl;
 			}
@@ -379,20 +379,22 @@ bool const_analyse()
 			else
 			{
 				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "赋值号后缺少数字！" << endl;
-				return 0;
 			}
 		}
 		else
 		{
 			cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "const后缺少定义变量！" << endl;
-			return 0;
 		}
 	}
 	else
 	{
 		cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "标识符错误！" << endl;
-		return 0;
 	}
+	while (Syn[analyse_num + 1].identity != "," && Syn[analyse_num].identity != ";")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
 bool factor_analyse()
@@ -417,19 +419,18 @@ bool factor_analyse()
 			if (Syn[analyse_num].symbol != "rightbrackets")
 			{
 				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "缺少右括号！" << endl;
-				return 0;
 			}
 			else
 			{
 				return 1;
 			}
 		}
-		else
-		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
-			return 0;
-		}
 	}
+	while (Syn[analyse_num + 1].symbol != "mop" && Syn[analyse_num + 1].symbol != "aop")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
 bool exp_analyse()
@@ -443,8 +444,7 @@ bool exp_analyse()
 	int temp = term_analyse();
 	if (temp == 0)
 	{
-		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是term！" << endl;
-		return 0;
+
 	}
 	else
 	{
@@ -452,11 +452,16 @@ bool exp_analyse()
 		while (Syn[analyse_num].symbol == "aop")
 		{
 			analyse_num++;
+			now_num = analyse_num;
+			if (Syn[analyse_num].symbol == "mop" || Syn[analyse_num].identity == ")" || Syn[analyse_num].symbol == "lop" || Syn[analyse_num].symbol == "then" || Syn[analyse_num].symbol == "do" || Syn[analyse_num].identity == "," || Syn[analyse_num].identity == ";" || Syn[analyse_num].symbol == "else" || Syn[analyse_num].symbol == "end")
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少表达式！" << endl;
+				break;
+			}
 			int temp = term_analyse();
 			if (temp == 0)
 			{
-				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是term！" << endl;
-				return 0;
+
 			}
 			else
 			{
@@ -466,6 +471,11 @@ bool exp_analyse()
 		analyse_num--;
 		return 1;
 	}
+	while (Syn[analyse_num + 1].symbol != "mop" && Syn[analyse_num + 1].symbol != "aop" && Syn[analyse_num + 1].identity != ")" && Syn[analyse_num + 1].symbol != "lop" && Syn[analyse_num + 1].symbol != "then" && Syn[analyse_num + 1].symbol != "do" && Syn[analyse_num + 1].identity != "," && Syn[analyse_num + 1].identity != ";" && Syn[analyse_num + 1].symbol != "else" && Syn[analyse_num + 1].symbol != "end")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
 bool term_analyse()
@@ -484,6 +494,11 @@ bool term_analyse()
 		{
 			analyse_num++;
 			now_num = analyse_num;
+			if (Syn[analyse_num].symbol == "aop" || Syn[analyse_num].identity == ")" || Syn[analyse_num].symbol == "lop" || Syn[analyse_num].symbol == "then" || Syn[analyse_num].symbol == "do" || Syn[analyse_num].identity == "," || Syn[analyse_num].identity == ";" || Syn[analyse_num].symbol == "else" || Syn[analyse_num].symbol == "end")
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
+				break;
+			}
 			int temp2 = factor_analyse();
 			if (temp2 == 1)
 			{
@@ -491,8 +506,7 @@ bool term_analyse()
 			}
 			else
 			{
-				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是factor！" << endl;
-				return 0;
+
 			}
 		}
 		analyse_num--;
@@ -500,8 +514,11 @@ bool term_analyse()
 	}
 	else
 	{
-		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是factor！" << endl;
-		return 0;
+
+	}
+	while (Syn[analyse_num + 1].symbol != "mop" && Syn[analyse_num + 1].symbol != "aop" && Syn[analyse_num + 1].identity != ")" && Syn[analyse_num + 1].symbol != "lop" && Syn[analyse_num + 1].symbol != "then" && Syn[analyse_num + 1].symbol != "do" && Syn[analyse_num + 1].identity != "," && Syn[analyse_num + 1].identity != ";" && Syn[analyse_num + 1].symbol != "else" && Syn[analyse_num + 1].symbol != "end")
+	{
+		analyse_num++;
 	}
 }
 
@@ -519,8 +536,6 @@ bool lexp_analyse()
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
-			return 0;
 		}
 	}
 	else
@@ -530,27 +545,29 @@ bool lexp_analyse()
 		{
 			analyse_num++;
 			now_num = analyse_num;
-			if (Syn[analyse_num].symbol == "lop")
+			if (Syn[analyse_num].symbol != "lop")
 			{
-				analyse_num++;
-				now_num = analyse_num;
-				int temp2 = exp_analyse();
-				if (temp2 == 1)
-				{
-					return 1;
-				}
-				else
-				{
-					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
-					return 0;
-				}
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少lop！" << endl;
+				analyse_num--;
+			}
+			analyse_num++;
+			now_num = analyse_num;
+			int temp2 = exp_analyse();
+			if (temp2 == 1)
+			{
+				return 1;
 			}
 			else
 			{
-				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是factor！" << endl;
+
 			}
 		}
 	}
+	while (Syn[analyse_num + 1].symbol != "mop" && Syn[analyse_num + 1].symbol != "aop" && Syn[analyse_num + 1].identity != ")" && Syn[analyse_num + 1].symbol != "lop" && Syn[analyse_num + 1].symbol != "then" && Syn[analyse_num + 1].symbol != "do" && Syn[analyse_num + 1].identity != "," && Syn[analyse_num + 1].identity != ";" && Syn[analyse_num + 1].symbol != "else" && Syn[analyse_num + 1].symbol != "end")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
 bool statement_analyse()
@@ -571,14 +588,13 @@ bool statement_analyse()
 			}
 			else
 			{
-				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！EXP错误！" << endl;
-				return 0;
+
 			}
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少:=！" << endl;
-			return 0;
+			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！:=错误！" << endl;
+
 		}
 	}
 	else if (Syn[analyse_num].symbol == "if")
@@ -590,51 +606,45 @@ bool statement_analyse()
 		{
 			analyse_num++;
 			now_num = analyse_num;
-			if (Syn[analyse_num].symbol == "then")
+			if (Syn[analyse_num].symbol != "then")
+			{
+				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是THEN！" << endl;
+				analyse_num--;
+			}
+			analyse_num++;
+			now_num = analyse_num;
+			int temp2 = statement_analyse();
+			if (temp2 == 1)
 			{
 				analyse_num++;
-				now_num = analyse_num;
-				int temp2 = statement_analyse();
-				if (temp2 == 1)
+				if (Syn[analyse_num].symbol == "else")
 				{
 					analyse_num++;
-					if (Syn[analyse_num].symbol == "else")
+					now_num = analyse_num;
+					int temp3 = statement_analyse();
+					if (temp3 == 1)
 					{
-						analyse_num++;
-						now_num = analyse_num;
-						int temp3 = statement_analyse();
-						if (temp3 == 1)
-						{
-							return 1;
-						}
-						else
-						{
-							cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是Statement！" << endl;
-							return 0;
-						}
+						return 1;
 					}
 					else
 					{
-						analyse_num--;
-						return 1;
+
 					}
 				}
 				else
 				{
-					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是Statement！" << endl;
-					return 0;
+					analyse_num--;
+					return 1;
 				}
 			}
 			else
 			{
-				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是THEN！" << endl;
-				return 0;
+
 			}
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是Statement！" << endl;
-			return 0;
+
 		}
 	}
 	else if (Syn[analyse_num].symbol == "while")
@@ -646,31 +656,22 @@ bool statement_analyse()
 		{
 			analyse_num++;
 			now_num = analyse_num;
-			if (Syn[analyse_num].symbol == "do")
-			{
-				analyse_num++;
-				now_num = analyse_num;
-				int temp2 = statement_analyse();
-				if (temp2 == 1)
-				{
-					return 1;
-				}
-				else
-				{
-					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是Statement！" << endl;
-					return 0;
-				}
-			}
-			else
+			if (Syn[analyse_num].symbol != "do")
 			{
 				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是do！" << endl;
-				return 0;
+				analyse_num--;
+			}
+			analyse_num++;
+			now_num = analyse_num;
+			int temp2 = statement_analyse();
+			if (temp2 == 1)
+			{
+				return 1;
 			}
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是LEXP！" << endl;
-			return 0;
+
 		}
 	}
 	else if (Syn[analyse_num].symbol == "call")
@@ -700,6 +701,11 @@ bool statement_analyse()
 						{
 							analyse_num++;
 							now_num = analyse_num;
+							if (Syn[analyse_num].identity == ")")
+							{
+								cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少表达式！" << endl;
+								break;
+							}
 							int temp2 = exp_analyse();
 							if (temp2 == 1)
 							{
@@ -707,11 +713,10 @@ bool statement_analyse()
 							}
 							else
 							{
-								cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
-								return 0;
+
 							}
 						}
-						now_num = analyse_num-1;
+						now_num = analyse_num - 1;
 						if (Syn[analyse_num].identity == ")")
 						{
 							return 1;
@@ -719,26 +724,24 @@ bool statement_analyse()
 						else
 						{
 							cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少右括号！" << endl;
-							return 0;
+							analyse_num--;
 						}
 					}
 					else
 					{
-						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
-						return 0;
+
 					}
 				}
 			}
 			else
 			{
 				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少左括号！" << endl;
-				return 0;
+				analyse_num--;
 			}
 		}
 		else
 		{
 			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是ID！" << endl;
-			return 0;
 		}
 	}
 	else if (Syn[analyse_num].symbol == "read")
@@ -765,7 +768,6 @@ bool statement_analyse()
 					else
 					{
 						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是ID！" << endl;
-						return 0;
 					}
 				}
 				if (Syn[analyse_num].identity == ")")
@@ -774,20 +776,18 @@ bool statement_analyse()
 				}
 				else
 				{
-					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是右括号！" << endl;
-					return 0;
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺失右括号！" << endl;
+					analyse_num--;
 				}
 			}
 			else
 			{
 				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是ID！" << endl;
-				return 0;
 			}
 		}
 		else
 		{
-			cout << Syn[now_num-1].line << "行" << Syn[now_num-1].col << "列" << "语法错误！不是左括号！" << endl;
-			return 0;
+			cout << Syn[now_num - 1].line << "行" << Syn[now_num - 1].col << "列" << "语法错误！不是左括号！" << endl;
 		}
 	}
 	else if (Syn[analyse_num].symbol == "write")
@@ -806,6 +806,11 @@ bool statement_analyse()
 				{
 					now_num = analyse_num;
 					analyse_num++;
+					if (Syn[analyse_num].identity == ")")
+					{
+						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少表达式！" << endl;
+						break;
+					}
 					int temp2 = exp_analyse();
 					if (temp2 == 1)
 					{
@@ -813,8 +818,6 @@ bool statement_analyse()
 					}
 					else
 					{
-						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
-						return 0;
 					}
 				}
 				now_num = analyse_num;
@@ -825,19 +828,16 @@ bool statement_analyse()
 				else
 				{
 					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少右括号！" << endl;
-					return 0;
+					analyse_num--;
 				}
 			}
 			else
 			{
-				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！不是EXP！" << endl;
-				return 0;
 			}
 		}
 		else
 		{
 			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少左括号！" << endl;
-			return 0;
 		}
 	}
 	else {
@@ -850,9 +850,13 @@ bool statement_analyse()
 		else
 		{
 			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少body！" << endl;
-			return 0;
 		}
 	}
+	while (Syn[analyse_num + 1].identity != ";" && Syn[analyse_num + 1].symbol != "else" && Syn[analyse_num + 1].symbol != "end")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
 bool body_analyse()
@@ -867,29 +871,20 @@ bool body_analyse()
 		{
 			analyse_num++;
 			now_num = analyse_num;
-			while (Syn[analyse_num].identity == ";")
+			while (1)
 			{
-				analyse_num++;
+				if (Syn[analyse_num].identity == ";")
+					analyse_num++;
+				else if(Syn[analyse_num].identity!="end")
+					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少;！" << endl;
 				now_num = analyse_num;
 				if (Syn[analyse_num].symbol == "end")
 				{
 					break;
 				}
 				int temp2 = statement_analyse();
-				if (temp2 == 1)
-				{
-					analyse_num++;
-					if ((Syn[analyse_num].identity != ";" && Syn[analyse_num + 1].symbol != "end")&&(Syn[analyse_num].symbol!="end"))
-					{
-						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少;！" << endl;
-						return 0;
-					}
-				}
-				else
-				{
-					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！statement错误！" << endl;
-					return 0;
-				}
+				analyse_num++;
+				now_num = analyse_num;
 			}
 			if (Syn[analyse_num].symbol == "end")
 			{
@@ -898,20 +893,21 @@ bool body_analyse()
 			else
 			{
 				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少end！" << endl;
-				return 0;
 			}
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！statement错误！" << endl;
-			return 0;
 		}
 	}
 	else
 	{
 		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少begin！" << endl;
-		return 0;
 	}
+	while (Syn[analyse_num + 1].identity != ";" && Syn[analyse_num + 1].symbol != "else" && Syn[analyse_num + 1].symbol != "end")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
 bool proc_analyse()
@@ -944,7 +940,6 @@ bool proc_analyse()
 						else
 						{
 							cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
-							return 0;
 						}
 					}
 				}
@@ -952,68 +947,60 @@ bool proc_analyse()
 				{
 					analyse_num++;
 					now_num = analyse_num;
-					if (Syn[analyse_num].identity == ";")
+					if (Syn[analyse_num].identity != ";")
+					{
+						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少;！" << endl;
+						analyse_num--;
+					}
+					analyse_num++;
+					now_num = analyse_num;
+					int temp = block_analyse();
+					if (temp == 1)
 					{
 						analyse_num++;
-						now_num = analyse_num;
-						int temp = block_analyse();
-						if (temp == 1)
+						while (Syn[analyse_num].identity == ";")
 						{
 							analyse_num++;
-							while (Syn[analyse_num].identity == ";")
+							now_num = analyse_num;
+							int temp2 = proc_analyse();
+							if (temp2 == 1)
 							{
 								analyse_num++;
 								now_num = analyse_num;
-								int temp2 = proc_analyse();
-								if (temp2 == 1)
-								{
-									analyse_num++;
-									now_num = analyse_num;
-								}
-								else
-								{
-									cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少proc！" << endl;
-									return 0;
-								}
 							}
-							analyse_num--;
-							return 1;
+							else
+							{
+
+							}
 						}
-						else
-						{
-							cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少block！" << endl;
-							return 0;
-						}
-					}
-					else
-					{
-						cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少;！" << endl;
-						return 0;
+						analyse_num--;
+						return 1;
 					}
 				}
 				else
 				{
 					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少右括号！" << endl;
-					return 0;
 				}
 			}
 			else
 			{
 				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少左括号！" << endl;
-				return 0;
 			}
 		}
 		else
 		{
 			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
-			return 0;
 		}
 	}
 	else
 	{
 		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少procedure！" << endl;
-		return 0;
 	}
+	while (Syn[analyse_num + 1].identity != ";" && Syn[analyse_num + 1].symbol != "else" && Syn[analyse_num + 1].symbol != "begin")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
 bool vardecl_analyse()
@@ -1039,7 +1026,6 @@ bool vardecl_analyse()
 				else
 				{
 					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
-					return 0;
 				}
 			}
 			if (Syn[analyse_num].identity == ";")
@@ -1049,23 +1035,27 @@ bool vardecl_analyse()
 			else
 			{
 				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << "缺少;！" << endl;
-				return 0;
+				analyse_num--;
 			}
 		}
 		else
 		{
 			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
-			return 0;
 		}
 	}
 	else
 	{
 		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少var！" << endl;
-		return 0;
+		analyse_num--;
 	}
+	while (Syn[analyse_num + 1].symbol != "procedure" && Syn[analyse_num + 1].symbol != "begin")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
-bool condecl_analyse() 
+bool condecl_analyse()
 {
 	int now_num = analyse_num;
 	if (Syn[analyse_num].symbol == "const")
@@ -1089,8 +1079,6 @@ bool condecl_analyse()
 				}
 				else
 				{
-					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！const错误！" << endl;
-					return 0;
 				}
 			}
 			if (Syn[analyse_num].identity == ";")
@@ -1100,20 +1088,23 @@ bool condecl_analyse()
 			else
 			{
 				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少;！" << endl;
-				return 0;
+				analyse_num--;
 			}
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！const错误！" << endl;
-			return 0;
 		}
 	}
 	else
 	{
 		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少const！" << endl;
-		return 0;
+		analyse_num--;
 	}
+	while (Syn[analyse_num + 1].symbol != "var" && Syn[analyse_num + 1].symbol != "procedure" && Syn[analyse_num + 1].symbol != "begin")
+	{
+		analyse_num++;
+	}
+	return 1;
 }
 
 bool block_analyse()
@@ -1128,8 +1119,6 @@ bool block_analyse()
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！const错误！" << endl;
-			return 0;
 		}
 	}
 	now_num = analyse_num;
@@ -1142,8 +1131,6 @@ bool block_analyse()
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！var错误！" << endl;
-			return 0;
 		}
 	}
 	now_num = analyse_num;
@@ -1156,8 +1143,6 @@ bool block_analyse()
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！proc错误！" << endl;
-			return 0;
 		}
 	}
 	int temp = body_analyse();
@@ -1167,9 +1152,8 @@ bool block_analyse()
 	}
 	else
 	{
-		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！body错误！" << endl;
-		return 0;
 	}
+	return 1;
 }
 
 bool prog_analyse()
@@ -1183,39 +1167,28 @@ bool prog_analyse()
 		{
 			analyse_num++;
 			now_num = analyse_num;
-			if (Syn[analyse_num].identity == ";")
-			{
-				analyse_num++;
-				now_num = analyse_num;
-				int temp = block_analyse();
-				if (temp == 1)
-				{
-					cout << "编译成功" << endl;
-					return 1;
-				}
-				else
-				{
-					cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！block出错！" << endl;
-					return 0;
-				}
-			}
-			else
+			if (Syn[analyse_num].identity != ";")
 			{
 				cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少;！" << endl;
-				return 0;
+				analyse_num--;
+			}
+			analyse_num++;
+			now_num = analyse_num;
+			int temp = block_analyse();
+			if (temp == 1)
+			{
+				cout << "编译完成" << endl;
+				return 1;
 			}
 		}
 		else
 		{
-			cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少id！" << endl;
-			return 0;
 		}
 	}
 	else
 	{
-		cout << Syn[now_num].line << "行" << Syn[now_num].col << "列" << "语法错误！缺少program！" << endl;
-		return 0;
 	}
+	return 1;
 }
 
 void Syn_analyse()
@@ -1226,10 +1199,11 @@ void Syn_analyse()
 int main()
 {
 	word();
-	for(int i=0;i<num;i++)
+	for (int i = 0; i < num; i++)
 	{
-		cout<<Syn[i].line<<" "<<Syn[i].col<<" "<<Syn[i].identity<<"--"<<Syn[i].symbol<<endl;
+		cout << Syn[i].line << " " << Syn[i].col << " " << Syn[i].identity << "--" << Syn[i].symbol << endl;
 	}
 	prog_analyse();
 	return 0;
 }
+
