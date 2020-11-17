@@ -684,15 +684,15 @@ int error(string identity, string error_id)
 		}
 		if (error_id == ";")
 		{
-			if (Syn[analyse_num].identity != ";" && (Syn[analyse_num + 1].symbol == "identity" || Syn[analyse_num + 1].identity == "if" || Syn[analyse_num + 1].symbol == "while" || Syn[analyse_num + 1].symbol == "call" || Syn[analyse_num + 1].symbol == "begin" || Syn[analyse_num + 1].symbol == "read" || Syn[analyse_num + 1].symbol == "write"))
-			{
-				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << ";_error!" << endl;
-				return 0;
-			}
-			else if (Syn[analyse_num].symbol == "identity" || Syn[analyse_num].identity == "if" || Syn[analyse_num].symbol == "while" || Syn[analyse_num].symbol == "call" || Syn[analyse_num].symbol == "begin" || Syn[analyse_num].symbol == "read" || Syn[analyse_num].symbol == "write")
+			if (Syn[analyse_num].symbol == "identity" || Syn[analyse_num].identity == "if" || Syn[analyse_num].symbol == "while" || Syn[analyse_num].symbol == "call" || Syn[analyse_num].symbol == "begin" || Syn[analyse_num].symbol == "read" || Syn[analyse_num].symbol == "write")
 			{
 				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << ";_lack!" << endl;
 				return 1;
+			}
+			else if (Syn[analyse_num].identity != ";" && (Syn[analyse_num + 1].symbol == "identity" || Syn[analyse_num + 1].identity == "if" || Syn[analyse_num + 1].symbol == "while" || Syn[analyse_num + 1].symbol == "call" || Syn[analyse_num + 1].symbol == "begin" || Syn[analyse_num + 1].symbol == "read" || Syn[analyse_num + 1].symbol == "write"))
+			{
+				cout << Syn[analyse_num].line << "行" << Syn[analyse_num].col << "列" << ";_error!" << endl;
+				return 0;
 			}
 		}
 	}
