@@ -452,9 +452,9 @@ bool factor_analyse()
 			return 1;
 		}
 	}
-	err[err_num].line = Syn[now_num].line;
-	err[err_num].col = Syn[now_num].col;
-	err[err_num].er = "语法错误，factor错误！";
+	err[err_num].line = Syn[analyse_num].line;
+	err[err_num].col = Syn[analyse_num].col;
+	err[err_num].er = "语法错误，factor缺失！";
 	err_num++;
 	analyse_num--;
 	return 1;
@@ -1250,7 +1250,6 @@ bool prog_analyse()
 		analyse_num++;
 		now_num = analyse_num;
 		int temp = block_analyse();
-		cout << "编译完成" << endl;
 		return 1;
 	}
 	return 1;
@@ -1269,10 +1268,15 @@ int main()
 		cout << Syn[i].line << " " << Syn[i].col << " " << Syn[i].identity << "--" << Syn[i].symbol << endl;
 	}
 	prog_analyse();
-	for (int i = 0; i < err_num; i++)
+	if (err_num)
 	{
-		cout << err[i].line << "行" << err[i].col << "列" << err[i].er << endl;
+		for (int i = 0; i < err_num; i++)
+		{
+			cout << err[i].line << "行" << err[i].col << "列" << err[i].er << endl;
+		}
 	}
+	else
+		cout << "编译成功" << endl;
 	return 0;
 }
 
