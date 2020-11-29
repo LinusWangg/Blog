@@ -1020,12 +1020,24 @@ bool proc_analyse()
 		}
 		analyse_num++;
 		now_num = analyse_num;
+		int flag = 0;
 		if (Syn[analyse_num].symbol == "identity")
 		{
 			analyse_num++;
 			now_num = analyse_num;
-			while (Syn[analyse_num].identity == ",")
+			if (Syn[analyse_num].symbol == "identity")
+				flag = 1;
+			while (Syn[analyse_num].identity == "," || flag)
 			{
+				if (flag)
+				{
+					err[err_num].line = Syn[analyse_num].line;
+					err[err_num].col = Syn[analyse_num].col;
+					err[err_num].er = "Óï·¨´íÎó£¬È±ÉÙ,!";
+					err_num++;
+					analyse_num--;
+				}
+				flag = 0;
 				analyse_num++;
 				now_num = analyse_num;
 				if (Syn[analyse_num].symbol == "identity")
@@ -1079,6 +1091,7 @@ bool proc_analyse()
 bool vardecl_analyse()
 {
 	int now_num = analyse_num;
+	int flag = 0;
 	if (Syn[analyse_num].symbol == "var")
 	{
 		analyse_num++;
@@ -1087,8 +1100,19 @@ bool vardecl_analyse()
 		{
 			analyse_num++;
 			now_num = analyse_num;
-			while (Syn[analyse_num].identity == ",")
+			if (Syn[analyse_num].symbol == "identity")
+				flag = 1;
+			while (Syn[analyse_num].identity == "," || flag)
 			{
+				if (flag)
+				{
+					err[err_num].line = Syn[analyse_num].line;
+					err[err_num].col = Syn[analyse_num].col;
+					err[err_num].er = "Óï·¨´íÎó£¬È±ÉÙ,£¡";
+					err_num++;
+					analyse_num--;
+				}
+				flag = 0;
 				analyse_num++;
 				now_num = analyse_num;
 				if (Syn[analyse_num].symbol == "identity")
@@ -1135,6 +1159,7 @@ bool vardecl_analyse()
 bool condecl_analyse()
 {
 	int now_num = analyse_num;
+	int flag = 0;
 	if (Syn[analyse_num].symbol == "const")
 	{
 		analyse_num++;
@@ -1142,13 +1167,26 @@ bool condecl_analyse()
 		const_analyse();
 		analyse_num++;
 		now_num = analyse_num;
-		while (Syn[analyse_num].identity == ",")
+		if (Syn[analyse_num].symbol == "identity")
+			flag = 1;
+		while (Syn[analyse_num].identity == "," || flag)
 		{
+			if (flag)
+			{
+				err[err_num].line = Syn[analyse_num].line;
+				err[err_num].col = Syn[analyse_num].col;
+				err[err_num].er = "Óï·¨´íÎó£¬È±ÉÙ,£¡";
+				err_num++;
+				analyse_num--;
+			}
+			flag = 0;
 			analyse_num++;
 			now_num = analyse_num;
 			const_analyse();
 			analyse_num++;
 			now_num = analyse_num;
+			if (Syn[analyse_num].symbol == "identity")
+				flag = 1;
 		}
 		if (Syn[analyse_num].identity == ";")
 		{
