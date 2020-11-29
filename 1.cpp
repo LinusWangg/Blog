@@ -377,7 +377,7 @@ bool const_analyse()
 	if (Syn[analyse_num].symbol == "identity")
 	{
 		analyse_num++;
-		if (Syn[analyse_num].symbol != "Assign" && Syn[analyse_num+1].symbol == "num")
+		if (Syn[analyse_num].symbol != "Assign" && Syn[analyse_num + 1].symbol == "num")
 		{
 			err[err_num].line = Syn[analyse_num].line;
 			err[err_num].col = Syn[analyse_num].col;
@@ -395,7 +395,7 @@ bool const_analyse()
 				err_num++;
 				analyse_num--;
 			}
-			else if (Syn[analyse_num+1].identity == "," || Syn[analyse_num+1].identity == ";")
+			else if (Syn[analyse_num + 1].identity == "," || Syn[analyse_num + 1].identity == ";")
 			{
 				err[err_num].line = Syn[analyse_num].line;
 				err[err_num].col = Syn[analyse_num].col;
@@ -686,7 +686,7 @@ bool statement_analyse()
 				err_num++;
 				analyse_num--;
 			}
-			else if (Syn[analyse_num+1].symbol == "aop" || Syn[analyse_num+1].symbol == "identity" || Syn[analyse_num+1].symbol == "num" || Syn[analyse_num+1].identity == "(")
+			else if (Syn[analyse_num + 1].symbol == "aop" || Syn[analyse_num + 1].symbol == "identity" || Syn[analyse_num + 1].symbol == "num" || Syn[analyse_num + 1].identity == "(")
 			{
 				err[err_num].line = Syn[analyse_num].line;
 				err[err_num].col = Syn[analyse_num].col;
@@ -735,7 +735,7 @@ bool statement_analyse()
 					err_num++;
 					analyse_num--;
 				}
-				else if (Syn[analyse_num+1].symbol == "end" || Syn[analyse_num+1].identity == ";")
+				else if (Syn[analyse_num + 1].symbol == "end" || Syn[analyse_num + 1].identity == ";")
 				{
 					err[err_num].line = Syn[analyse_num].line;
 					err[err_num].col = Syn[analyse_num].col;
@@ -771,7 +771,7 @@ bool statement_analyse()
 		now_num = analyse_num;
 		if (Syn[analyse_num].symbol != "identity")
 		{
-			if (Syn[analyse_num].identity == ","|| Syn[analyse_num].identity == ")")
+			if (Syn[analyse_num].identity == "," || Syn[analyse_num].identity == ")")
 			{
 				err[err_num].line = Syn[analyse_num].line;
 				err[err_num].col = Syn[analyse_num].col;
@@ -779,7 +779,7 @@ bool statement_analyse()
 				err_num++;
 				analyse_num--;
 			}
-			else if (Syn[analyse_num+1].identity == "," || Syn[analyse_num+1].identity == ")")
+			else if (Syn[analyse_num + 1].identity == "," || Syn[analyse_num + 1].identity == ")")
 			{
 				err[err_num].line = Syn[analyse_num].line;
 				err[err_num].col = Syn[analyse_num].col;
@@ -1100,19 +1100,10 @@ bool vardecl_analyse()
 		{
 			analyse_num++;
 			now_num = analyse_num;
-			if (Syn[analyse_num].symbol == "identity")
-				flag = 1;
-			while (Syn[analyse_num].identity == "," || flag)
+			while (Syn[analyse_num].identity == ",")
 			{
-				if (flag)
-				{
-					err[err_num].line = Syn[analyse_num].line;
-					err[err_num].col = Syn[analyse_num].col;
-					err[err_num].er = "Óï·¨´íÎó£¬È±ÉÙ,£¡";
-					err_num++;
-					analyse_num--;
-				}
-				flag = 0;
+				if (Syn[analyse_num].identity == ";")
+					break;
 				analyse_num++;
 				now_num = analyse_num;
 				if (Syn[analyse_num].symbol == "identity")
@@ -1243,53 +1234,67 @@ bool block_analyse()
 bool prog_analyse()
 {
 	int now_num = analyse_num;
-	if (Syn[analyse_num].symbol == "program")
+	if (Syn[analyse_num].symbol != "program")
 	{
-		analyse_num++;
-		now_num = analyse_num;
-		if (Syn[analyse_num].symbol != "identity")
+		if (Syn[analyse_num + 1].symbol == "identity")
 		{
-			if (Syn[analyse_num].identity == ";")
-			{
-				err[err_num].line = Syn[analyse_num].line;
-				err[err_num].col = Syn[analyse_num].col;
-				err[err_num].er = "Óï·¨´íÎó£¬È±ÉÙid£¡";
-				err_num++;
-				analyse_num--;
-			}
-			else if (Syn[analyse_num + 1].identity == ";")
-			{
-				err[err_num].line = Syn[analyse_num].line;
-				err[err_num].col = Syn[analyse_num].col;
-				err[err_num].er = "Óï·¨´íÎó£¬id´íÎó£¡";
-				err_num++;
-			}
+			err[err_num].line = Syn[analyse_num].line;
+			err[err_num].col = Syn[analyse_num].col;
+			err[err_num].er = "Óï·¨´íÎó£¬program´íÎó£¡";
+			err_num++;
 		}
-		analyse_num++;
-		now_num = analyse_num;
-		if (Syn[analyse_num].identity != ";")
+		else
 		{
-			if (Syn[analyse_num].identity == "const" || Syn[analyse_num].identity == "var" || Syn[analyse_num].identity == "procedure" || Syn[analyse_num].identity == "begin")
-			{
-				err[err_num].line = Syn[analyse_num].line;
-				err[err_num].col = Syn[analyse_num].col;
-				err[err_num].er = "Óï·¨´íÎó£¬È±ÉÙ;£¡";
-				err_num++;
-				analyse_num--;
-			}
-			else if (Syn[analyse_num+1].identity == "const" || Syn[analyse_num+1].identity == "var" || Syn[analyse_num+1].identity == "procedure" || Syn[analyse_num+1].identity == "begin")
-			{
-				err[err_num].line = Syn[analyse_num].line;
-				err[err_num].col = Syn[analyse_num].col;
-				err[err_num].er = "Óï·¨´íÎó£¬;´íÎó£¡";
-				err_num++;
-			}
+			err[err_num].line = Syn[analyse_num].line;
+			err[err_num].col = Syn[analyse_num].col;
+			err[err_num].er = "Óï·¨´íÎó£¬programÈ±Ê§£¡";
+			analyse_num--;
+			err_num++;
 		}
-		analyse_num++;
-		now_num = analyse_num;
-		int temp = block_analyse();
-		return 1;
 	}
+	analyse_num++;
+	now_num = analyse_num;
+	if (Syn[analyse_num].symbol != "identity")
+	{
+		if (Syn[analyse_num].identity == ";")
+		{
+			err[err_num].line = Syn[analyse_num].line;
+			err[err_num].col = Syn[analyse_num].col;
+			err[err_num].er = "Óï·¨´íÎó£¬È±ÉÙid£¡";
+			err_num++;
+			analyse_num--;
+		}
+		else if (Syn[analyse_num + 1].identity == ";")
+		{
+			err[err_num].line = Syn[analyse_num].line;
+			err[err_num].col = Syn[analyse_num].col;
+			err[err_num].er = "Óï·¨´íÎó£¬id´íÎó£¡";
+			err_num++;
+		}
+	}
+	analyse_num++;
+	now_num = analyse_num;
+	if (Syn[analyse_num].identity != ";")
+	{
+		if (Syn[analyse_num].identity == "const" || Syn[analyse_num].identity == "var" || Syn[analyse_num].identity == "procedure" || Syn[analyse_num].identity == "begin")
+		{
+			err[err_num].line = Syn[analyse_num].line;
+			err[err_num].col = Syn[analyse_num].col;
+			err[err_num].er = "Óï·¨´íÎó£¬È±ÉÙ;£¡";
+			err_num++;
+			analyse_num--;
+		}
+		else if (Syn[analyse_num + 1].identity == "const" || Syn[analyse_num + 1].identity == "var" || Syn[analyse_num + 1].identity == "procedure" || Syn[analyse_num + 1].identity == "begin")
+		{
+			err[err_num].line = Syn[analyse_num].line;
+			err[err_num].col = Syn[analyse_num].col;
+			err[err_num].er = "Óï·¨´íÎó£¬;´íÎó£¡";
+			err_num++;
+		}
+	}
+	analyse_num++;
+	now_num = analyse_num;
+	int temp = block_analyse();
 	return 1;
 }
 
