@@ -191,33 +191,35 @@ namespace MeshN {
 ////////////////////////////////////////////////////////////////////////////////////
 	template<class ExItems>
 	typename ExKernelT<ExItems>::Scalar
-		ExKernelT<ExItems>::calc_facet_area(const FacetHandle& _fh){/////计算三角形的面积
+		ExKernelT<ExItems>::calc_facet_area(const FacetHandle& _fh) {/////计算三角形的面积
 
 			///得到半边句柄
-			assert(_fh.is_valid());
-			assert(_fh.idx() < facet_size());
+		assert(_fh.is_valid());
+		assert(_fh.idx() < facet_size());
 
-			const HalfedgeHandle& hh = halfedge_handle(_fh);
-			const HalfedgeHandle& p_hh = prev_halfedge_handle(hh);
-			const HalfedgeHandle& n_hh = next_halfedge_handle(hh);
+		const HalfedgeHandle& hh = halfedge_handle(_fh);
+		const HalfedgeHandle& p_hh = prev_halfedge_handle(hh);
+		const HalfedgeHandle& n_hh = next_halfedge_handle(hh);
 
-			////由半边句柄得到边句柄
-			const Coord& cd0 = coord(vertex_handle(hh));
-			const Coord& cd1 = coord(vertex_handle(p_hh));
-			const Coord& cd2 = coord(vertex_handle(n_hh));
-			double length0 = sqrt(pow(cd0.data_[0]-cd1.data_[0],2)+pow( cd0.data_[1] - cd1.data_[1], 2)+ pow(cd0.data_[2] - cd1.data_[2], 2));
-			double length1 = sqrt(pow(cd0.data_[0] - cd2.data_[0], 2) + pow(cd0.data_[1] - cd2.data_[1], 2) + pow(cd0.data_[2] - cd2.data_[2], 2));
-			double length2 = sqrt(pow(cd2.data_[0] - cd1.data_[0], 2) + pow(cd2.data_[1] - cd1.data_[1], 2) + pow(cd2.data_[2] - cd1.data_[2], 2));
-			////由边句柄得到各边长
-			double p = (length0 + length1 + length2) / 2;
+		////由半边句柄得到边句柄
+		const EdgeHandle& e_hh = edge_handle(hh);
+		const EdgeHandle& e_phh = edge_handle(p_hh);
+		const EdgeHandle& e_nhh = edge_handle(n_hh);
 
-			////利用海伦公式求面积s=sqrt(p(p-a)(p-b)(p-c))
-			Scalar area = 0.0;
-			area = sqrt(p * (p - length0) * (p - length1) * (p - length2));
+		////由边句柄得到各边长
+		double length0 = calc_edge_length(e_hh);
+		double length1 = calc_edge_length(e_phh);
+		double length2 = calc_edge_length(e_nhh);
+
+		double p = (length0 + length1 + length2) / 2;
+
+		////利用海伦公式求面积s=sqrt(p(p-a)(p-b)(p-c))
+		Scalar area = 0.0;
+		area = sqrt(p * (p - length0) * (p - length1) * (p - length2));
 
 
-			facet_ref(_fh).area_ = area;
-			return area;
+		facet_ref(_fh).area_ = area;
+		return area;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
