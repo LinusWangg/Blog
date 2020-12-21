@@ -1344,7 +1344,7 @@ bool block_analyse(int pre_table,int level)
 		analyse_num++;
 	}
 	body_analyse();
-	check_table = pre_table;
+	check_table = fa_table[pre_table];
 	return 1;
 }
 
