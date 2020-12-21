@@ -33,6 +33,7 @@ public:
 	bool ogl_writer(bool  _orient=true, bool _smooth=false);  //drawing by OGL
 	bool ogl_writer2(bool  _orient = true, bool _smooth = false);  //drawing by OGL
 	bool ogl_writer3(bool  _orient = true, bool _smooth = false);  //drawing by OGL
+	bool ogl_writer5(bool  _orient = true, bool _smooth = false);  //drawing by OGL
 
 private:
 	Mesh*  mesh_;  //mesh object

@@ -2,7 +2,11 @@
 #include<string>
 #include<cstring>
 #include<fstream>
+#include<vector>
+#include<stdio.h>
+#include<stdlib.h>
 using namespace std;
+
 string reserve[15] = { "program","const","var","procedure","begin","end","if","then","else","while","do","call","read","write","odd" };
 string line, temp;
 int pos = 0;
@@ -20,6 +24,62 @@ struct error {
 	int line;
 	int col;
 }err[10000];
+
+struct table {
+	string identity;  //定义名称
+	string type;  //类型-const等
+	int val;  //值
+	int addr;  //偏移量
+};
+
+struct tablelink {
+	vector<table> level_table;
+	int level;
+}Tablelink[200];
+
+
+//得定义一个全局变量从谁能进入到这个单词表
+int now_level = 0;//当前层数
+int now_table = 1;//当前表单
+int fa_table[100];//父表
+int table_num = 1;//表单总数
+int analyse_num = 0;//当前单词
+int err_num = 0;//错误个数
+int level_idnum[100];//每一表变量个数
+
+int find(string id)
+{
+	for (int i = now_table; i; i = fa_table[i])
+	{
+		for (int j = 0; j < Tablelink[i].level_table.size(); j++)
+		{
+			if (Tablelink[i].level_table[j].identity == id)
+			{
+				return now_table;
+			}
+		}
+	}
+	return -1;
+}
+
+void enter(string id,string type)
+{
+	int find_result = find(id);  //查定义
+	if (find_result >= 0) {
+		err[err_num].line = Syn[analyse_num].line;
+		err[err_num].col = Syn[analyse_num].col;
+		err[err_num].er = "变量"+id+"重复定义！";
+		err_num++;
+		return;
+	}
+	table temp;
+	temp.identity = id;
+	temp.type = type;
+	temp.val = 0;
+	temp.addr = level_idnum[now_table];
+	Tablelink[now_table].level_table.push_back(temp);
+}
+
 bool const_analyse();
 bool factor_analyse();
 bool exp_analyse();
@@ -27,10 +87,10 @@ bool term_analyse();
 bool lexp_analyse();
 bool statement_analyse();
 bool body_analyse();
-bool proc_analyse();
+bool proc_analyse(int,int);
 bool vardecl_analyse();
 bool condecl_analyse();
-bool block_analyse();
+bool block_analyse(int,int);
 bool prog_analyse();
 
 void Getchar(char& ch)
@@ -79,8 +139,6 @@ string isreserve(string temp)
 	}
 	return "identity";
 }
-
-int err_num = 0;
 
 void word()
 {
@@ -370,12 +428,12 @@ void word()
 	outfile.close();
 }
 
-int analyse_num = 0;
-
 bool const_analyse()
 {
 	if (Syn[analyse_num].symbol == "identity")
 	{
+		enter(Syn[analyse_num].identity, "const");
+		level_idnum[now_level]++;
 		analyse_num++;
 		if (Syn[analyse_num].symbol != "Assign" && Syn[analyse_num + 1].symbol == "num")
 		{
@@ -402,6 +460,9 @@ bool const_analyse()
 				err[err_num].er = "语法错误，不是数字！";
 				err_num++;
 			}
+		}
+		else {
+			Tablelink[now_table].level_table[Tablelink[now_table].level_table.size() - 1].val = atoi(Syn[analyse_num].identity.c_str());
 		}
 		return 1;
 	}
@@ -973,9 +1034,10 @@ bool body_analyse()
 	return 1;
 }
 
-bool proc_analyse()
+bool proc_analyse(int pre_table,int level)
 {
 	int now_num = analyse_num;
+	now_level = level;
 	if (Syn[analyse_num].symbol == "procedure")
 	{
 		analyse_num++;
@@ -998,6 +1060,9 @@ bool proc_analyse()
 				err_num++;
 			}
 		}
+		else {
+			enter(Syn[analyse_num].identity, "procedure");
+		}
 		analyse_num++;
 		now_num = analyse_num;
 		if (Syn[analyse_num].identity != "(")
@@ -1018,15 +1083,23 @@ bool proc_analyse()
 				err_num++;
 			}
 		}
+		now_table++;  //新建表
+		fa_table[now_table] = pre_table;
+		Tablelink[now_table].level = level;
 		analyse_num++;
 		now_num = analyse_num;
 		int flag = 0;
 		if (Syn[analyse_num].symbol == "identity")
 		{
+			enter(Syn[analyse_num].identity, "var");
+			level_idnum[now_level]++;
 			analyse_num++;
 			now_num = analyse_num;
-			if (Syn[analyse_num].symbol == "identity")
+			if (Syn[analyse_num].symbol == "identity") {
 				flag = 1;
+				enter(Syn[analyse_num].identity, "var");
+				level_idnum[now_level]++;
+			}
 			while (Syn[analyse_num].identity == "," || flag)
 			{
 				if (flag)
@@ -1042,6 +1115,8 @@ bool proc_analyse()
 				now_num = analyse_num;
 				if (Syn[analyse_num].symbol == "identity")
 				{
+					enter(Syn[analyse_num].identity, "var");
+					level_idnum[now_level]++;
 					analyse_num++;
 				}
 				else
@@ -1067,13 +1142,13 @@ bool proc_analyse()
 			}
 			analyse_num++;
 			now_num = analyse_num;
-			block_analyse();
+			block_analyse(now_table,level);
 			analyse_num++;
 			while (Syn[analyse_num].identity == ";")
 			{
 				analyse_num++;
 				now_num = analyse_num;
-				proc_analyse();
+				proc_analyse(pre_table, level);
 				analyse_num++;
 				now_num = analyse_num;
 			}
@@ -1098,6 +1173,8 @@ bool vardecl_analyse()
 		now_num = analyse_num;
 		if (Syn[analyse_num].symbol == "identity")
 		{
+			enter(Syn[analyse_num].identity, "var");
+			level_idnum[now_level]++;
 			analyse_num++;
 			now_num = analyse_num;
 			while (Syn[analyse_num].identity == ",")
@@ -1108,6 +1185,8 @@ bool vardecl_analyse()
 				now_num = analyse_num;
 				if (Syn[analyse_num].symbol == "identity")
 				{
+					enter(Syn[analyse_num].identity, "var");
+					level_idnum[now_level]++;
 					analyse_num++;
 					now_num = analyse_num;
 				}
@@ -1207,7 +1286,7 @@ bool condecl_analyse()
 	return 1;
 }
 
-bool block_analyse()
+bool block_analyse(int pre_table,int level)
 {
 	int now_num = analyse_num;
 	if (Syn[analyse_num].identity == "const")
@@ -1224,7 +1303,7 @@ bool block_analyse()
 	now_num = analyse_num;
 	if (Syn[analyse_num].identity == "procedure")
 	{
-		proc_analyse();
+		proc_analyse(now_table,level+1);
 		analyse_num++;
 	}
 	body_analyse();
@@ -1294,7 +1373,7 @@ bool prog_analyse()
 	}
 	analyse_num++;
 	now_num = analyse_num;
-	int temp = block_analyse();
+	int temp = block_analyse(now_table,0);
 	return 1;
 }
 
