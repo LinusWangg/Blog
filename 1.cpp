@@ -41,6 +41,7 @@ struct tablelink {
 //得定义一个全局变量从谁能进入到这个单词表
 int now_level = 0;//当前层数
 int now_table = 1;//当前表单
+int check_table = 0;
 int fa_table[100];//父表
 int table_num = 1;//表单总数
 int analyse_num = 0;//当前单词
@@ -49,13 +50,13 @@ int level_idnum[100];//每一表变量个数
 
 int find(string id)
 {
-	for (int i = now_table; i; i = fa_table[i])
+	for (int i = check_table; i; i = fa_table[i])
 	{
 		for (int j = 0; j < Tablelink[i].level_table.size(); j++)
 		{
 			if (Tablelink[i].level_table[j].identity == id)
 			{
-				return now_table;
+				return i;
 			}
 		}
 	}
@@ -76,7 +77,7 @@ void enter(string id,string type)
 	temp.identity = id;
 	temp.type = type;
 	temp.val = 0;
-	temp.addr = level_idnum[now_table];
+	temp.addr = level_idnum[now_level];
 	Tablelink[now_table].level_table.push_back(temp);
 }
 
@@ -478,6 +479,12 @@ bool factor_analyse()
 	int now_num = 0;
 	if (Syn[analyse_num].symbol == "identity")
 	{
+		if (find(Syn[analyse_num].identity) == -1) {
+			err[err_num].line = Syn[analyse_num].line;
+			err[err_num].col = Syn[analyse_num].col;
+			err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
+			err_num++;
+		}
 		return 1;
 	}
 	else if (Syn[analyse_num].symbol == "num")
@@ -624,6 +631,12 @@ bool statement_analyse()
 	int now_num = 0;
 	if (Syn[analyse_num].symbol == "identity")
 	{
+		if (find(Syn[analyse_num].identity) == -1) {
+			err[err_num].line = Syn[analyse_num].line;
+			err[err_num].col = Syn[analyse_num].col;
+			err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
+			err_num++;
+		}
 		analyse_num++;
 		now_num = analyse_num;
 		if (Syn[analyse_num].identity == ":=")
@@ -732,6 +745,15 @@ bool statement_analyse()
 				err[err_num].line = Syn[analyse_num].line;
 				err[err_num].col = Syn[analyse_num].col;
 				err[err_num].er = "语法错误，id错误！";
+				err_num++;
+			}
+		}
+		else
+		{
+			if (find(Syn[analyse_num].identity) == -1) {
+				err[err_num].line = Syn[analyse_num].line;
+				err[err_num].col = Syn[analyse_num].col;
+				err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
 				err_num++;
 			}
 		}
@@ -848,6 +870,14 @@ bool statement_analyse()
 				err_num++;
 			}
 		}
+		else {
+			if (find(Syn[analyse_num].identity) == -1) {
+				err[err_num].line = Syn[analyse_num].line;
+				err[err_num].col = Syn[analyse_num].col;
+				err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
+				err_num++;
+			}
+		}
 		analyse_num++;
 		now_num = analyse_num;
 		while (Syn[analyse_num].identity == ",")
@@ -858,6 +888,12 @@ bool statement_analyse()
 			{
 				analyse_num++;
 				now_num = analyse_num;
+				if (find(Syn[analyse_num].identity) == -1) {
+					err[err_num].line = Syn[analyse_num].line;
+					err[err_num].col = Syn[analyse_num].col;
+					err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
+					err_num++;
+				}
 			}
 			else
 			{
@@ -1061,6 +1097,8 @@ bool proc_analyse(int pre_table,int level)
 			}
 		}
 		else {
+			check_table = now_table + 1;
+			fa_table[now_table + 1] = pre_table;
 			enter(Syn[analyse_num].identity, "procedure");
 		}
 		analyse_num++;
@@ -1084,7 +1122,6 @@ bool proc_analyse(int pre_table,int level)
 			}
 		}
 		now_table++;  //新建表
-		fa_table[now_table] = pre_table;
 		Tablelink[now_table].level = level;
 		analyse_num++;
 		now_num = analyse_num;
@@ -1307,6 +1344,7 @@ bool block_analyse(int pre_table,int level)
 		analyse_num++;
 	}
 	body_analyse();
+	check_table = pre_table;
 	return 1;
 }
 
