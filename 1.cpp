@@ -35,11 +35,17 @@ struct table {
 struct tablelink {
 	vector<table> level_table;
 	int level;
-}Tablelink[200];
+}Tablelink[200]; //变量表
 
+struct target_code {
+	string func;
+	int L; //层差
+	int a; //偏移地址
+}Code[200];
 
 //得定义一个全局变量从谁能进入到这个单词表
 int now_level = 0;//当前层数
+int now_level2 = 0;//傀儡层
 int now_table = 1;//当前表单
 int check_table = 0;
 int fa_table[100];//父表
@@ -47,6 +53,7 @@ int table_num = 1;//表单总数
 int analyse_num = 0;//当前单词
 int err_num = 0;//错误个数
 int level_idnum[100];//每一表变量个数
+int now_code = 1;//当前目标代码数量
 
 int find(string id)
 {
@@ -79,6 +86,14 @@ void enter(string id,string type)
 	temp.val = 0;
 	temp.addr = level_idnum[now_level];
 	Tablelink[now_table].level_table.push_back(temp);
+}
+
+void gen(string func, int L, int a)
+{
+	Code[now_code].func = func;
+	Code[now_code].L = L;
+	Code[now_code].a = a;
+	now_code++;
 }
 
 bool const_analyse();
@@ -434,7 +449,7 @@ bool const_analyse()
 	if (Syn[analyse_num].symbol == "identity")
 	{
 		enter(Syn[analyse_num].identity, "const");
-		level_idnum[now_level]++;
+		level_idnum[now_level2]++;
 		analyse_num++;
 		if (Syn[analyse_num].symbol != "Assign" && Syn[analyse_num + 1].symbol == "num")
 		{
@@ -1073,7 +1088,8 @@ bool body_analyse()
 bool proc_analyse(int pre_table,int level)
 {
 	int now_num = analyse_num;
-	now_level = level;
+	now_level++;
+	now_level2 = level;
 	if (Syn[analyse_num].symbol == "procedure")
 	{
 		analyse_num++;
@@ -1129,13 +1145,13 @@ bool proc_analyse(int pre_table,int level)
 		if (Syn[analyse_num].symbol == "identity")
 		{
 			enter(Syn[analyse_num].identity, "var");
-			level_idnum[now_level]++;
+			level_idnum[now_level2]++;
 			analyse_num++;
 			now_num = analyse_num;
 			if (Syn[analyse_num].symbol == "identity") {
 				flag = 1;
 				enter(Syn[analyse_num].identity, "var");
-				level_idnum[now_level]++;
+				level_idnum[now_level2]++;
 			}
 			while (Syn[analyse_num].identity == "," || flag)
 			{
@@ -1153,7 +1169,7 @@ bool proc_analyse(int pre_table,int level)
 				if (Syn[analyse_num].symbol == "identity")
 				{
 					enter(Syn[analyse_num].identity, "var");
-					level_idnum[now_level]++;
+					level_idnum[now_level2]++;
 					analyse_num++;
 				}
 				else
@@ -1180,6 +1196,7 @@ bool proc_analyse(int pre_table,int level)
 			analyse_num++;
 			now_num = analyse_num;
 			block_analyse(now_table,level);
+			now_level--;  //完成了block，层数减少
 			analyse_num++;
 			while (Syn[analyse_num].identity == ";")
 			{
@@ -1211,7 +1228,7 @@ bool vardecl_analyse()
 		if (Syn[analyse_num].symbol == "identity")
 		{
 			enter(Syn[analyse_num].identity, "var");
-			level_idnum[now_level]++;
+			level_idnum[now_level2]++;
 			analyse_num++;
 			now_num = analyse_num;
 			while (Syn[analyse_num].identity == ",")
@@ -1223,7 +1240,7 @@ bool vardecl_analyse()
 				if (Syn[analyse_num].symbol == "identity")
 				{
 					enter(Syn[analyse_num].identity, "var");
-					level_idnum[now_level]++;
+					level_idnum[now_level2]++;
 					analyse_num++;
 					now_num = analyse_num;
 				}
