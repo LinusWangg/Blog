@@ -55,7 +55,7 @@ int err_num = 0;//错误个数
 int level_idnum[100];//每一表变量个数
 int now_code = 1;//当前目标代码数量
 
-int find(string id)
+int find(string id,int &find_table,int &find_addr)
 {
 	for (int i = check_table; i; i = fa_table[i])
 	{
@@ -63,16 +63,21 @@ int find(string id)
 		{
 			if (Tablelink[i].level_table[j].identity == id)
 			{
+				find_table = i;
+				find_addr = j;
 				return i;
 			}
 		}
 	}
+	find_table = -1;
+	find_addr = -1;
 	return -1;
 }
 
 void enter(string id,string type)
 {
-	int find_result = find(id);  //查定义
+	int fd_ta, fd_ad;
+	int find_result = find(id,fd_ta,fd_ad);  //查定义
 	if (find_result >= 0) {
 		err[err_num].line = Syn[analyse_num].line;
 		err[err_num].col = Syn[analyse_num].col;
@@ -159,7 +164,7 @@ string isreserve(string temp)
 void word()
 {
 	fstream infile, outfile;
-	infile.open("1.txt", ios::in);
+	infile.open("1-1.txt", ios::in);
 	outfile.open("2.txt", ios::out);
 	if (infile.fail())
 	{
@@ -491,19 +496,34 @@ bool const_analyse()
 
 bool factor_analyse()
 {
-	int now_num = 0;
+	int now_num = 0, fd_ta, fd_ad;
 	if (Syn[analyse_num].symbol == "identity")
 	{
-		if (find(Syn[analyse_num].identity) == -1) {
+		if (find(Syn[analyse_num].identity,fd_ta,fd_ad) == -1) {
 			err[err_num].line = Syn[analyse_num].line;
 			err[err_num].col = Syn[analyse_num].col;
 			err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
 			err_num++;
 		}
+		else {
+			if (Tablelink[fd_ta].level_table[fd_ad].type == "const") {
+				gen("LIT", 0, Tablelink[fd_ta].level_table[fd_ad].val);
+			}
+			else if (Tablelink[fd_ta].level_table[fd_ad].type == "var") {
+				gen("LOD", now_level - Tablelink[fd_ta].level, fd_ad);
+			}
+			else if (Tablelink[fd_ta].level_table[fd_ad].type == "procedure") {
+				err[err_num].line = Syn[analyse_num].line;
+				err[err_num].col = Syn[analyse_num].col;
+				err[err_num].er = "变量"+Syn[analyse_num].identity+"是函数体！";
+				err_num++;
+			}
+		}
 		return 1;
 	}
 	else if (Syn[analyse_num].symbol == "num")
 	{
+		gen("LIT", 0, atoi(Syn[analyse_num].identity.c_str()));
 		return 1;
 	}
 	else if (Syn[analyse_num].symbol == "leftbrackets")
@@ -548,6 +568,10 @@ bool exp_analyse()
 	int now_num = 0;
 	if (Syn[analyse_num].identity == "+" || Syn[analyse_num].identity == "-")
 	{
+		if (Syn[analyse_num].identity == "+")
+			gen("OPR", 0, 1);
+		else if (Syn[analyse_num].identity == "-")
+			gen("OPR", 0, 2);
 		analyse_num++;
 		now_num = analyse_num;
 	}
@@ -555,6 +579,10 @@ bool exp_analyse()
 	analyse_num++;
 	while (Syn[analyse_num].symbol == "aop")
 	{
+		if (Syn[analyse_num].identity == "+")
+			gen("OPR", 0, 3);
+		else if (Syn[analyse_num].identity == "-")
+			gen("OPR", 0, 4);
 		analyse_num++;
 		now_num = analyse_num;
 		if (Syn[analyse_num].symbol == "mop" || Syn[analyse_num].identity == ")" || Syn[analyse_num].symbol == "lop" || Syn[analyse_num].symbol == "then" || Syn[analyse_num].symbol == "do" || Syn[analyse_num].identity == "," || Syn[analyse_num].identity == ";" || Syn[analyse_num].symbol == "else" || Syn[analyse_num].symbol == "end")
@@ -584,6 +612,10 @@ bool term_analyse()
 	}
 	while (Syn[analyse_num].symbol == "mop")
 	{
+		if (Syn[analyse_num].identity == "*")
+			gen("OPR", 0, 5);
+		else if (Syn[analyse_num].identity == "/")
+			gen("OPR", 0, 6);
 		analyse_num++;
 		now_num = analyse_num;
 		if (Syn[analyse_num].symbol == "aop" || Syn[analyse_num].identity == ")" || Syn[analyse_num].symbol == "lop" || Syn[analyse_num].symbol == "then" || Syn[analyse_num].symbol == "do" || Syn[analyse_num].identity == "," || Syn[analyse_num].identity == ";" || Syn[analyse_num].symbol == "else" || Syn[analyse_num].symbol == "end")
@@ -606,6 +638,7 @@ bool lexp_analyse()
 	int now_num = analyse_num;
 	if (Syn[analyse_num].symbol == "odd")
 	{
+		gen("OPR", 0, 7);
 		analyse_num++;
 		now_num = analyse_num;
 		exp_analyse();
@@ -634,6 +667,20 @@ bool lexp_analyse()
 				err_num++;
 			}
 		}
+		else {
+			if (Syn[analyse_num].identity == "=")
+				gen("OPR", 0, 8);
+			else if (Syn[analyse_num].identity == "<>")
+				gen("OPR", 0, 9);
+			else if (Syn[analyse_num].identity == "<")
+				gen("OPR", 0, 10);
+			else if (Syn[analyse_num].identity == "<=")
+				gen("OPR", 0, 11);
+			else if (Syn[analyse_num].identity == ">")
+				gen("OPR", 0, 12);
+			else if (Syn[analyse_num].identity == ">=")
+				gen("OPR", 0, 13);
+		}
 		analyse_num++;
 		now_num = analyse_num;
 		exp_analyse();
@@ -643,10 +690,10 @@ bool lexp_analyse()
 
 bool statement_analyse()
 {
-	int now_num = 0;
+	int now_num = 0, fd_ta, fd_ad;
 	if (Syn[analyse_num].symbol == "identity")
 	{
-		if (find(Syn[analyse_num].identity) == -1) {
+		if (find(Syn[analyse_num].identity, fd_ta, fd_ad) == -1) {
 			err[err_num].line = Syn[analyse_num].line;
 			err[err_num].col = Syn[analyse_num].col;
 			err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
@@ -659,6 +706,7 @@ bool statement_analyse()
 			analyse_num++;
 			now_num = analyse_num;
 			exp_analyse();
+			gen("STO", now_level - Tablelink[fd_ta].level, fd_ad);
 			return 1;
 		}
 		else
@@ -671,6 +719,7 @@ bool statement_analyse()
 	}
 	else if (Syn[analyse_num].symbol == "if")
 	{
+		int else_in, out;
 		analyse_num++;
 		now_num = analyse_num;
 		lexp_analyse();
@@ -694,15 +743,23 @@ bool statement_analyse()
 				err_num++;
 			}
 		}
+		else {//为then
+			else_in = now_code;//后面回填else的入口
+			gen("JPC", 0, 0);//需要回填
+		}
 		analyse_num++;
 		now_num = analyse_num;
 		statement_analyse();
+		out = now_code;
+		gen("JMP", 0, 0);//回填总语句出口
 		analyse_num++;
+		Code[else_in].a = now_code;//回填else语句
 		if (Syn[analyse_num].symbol == "else")
 		{
 			analyse_num++;
 			now_num = analyse_num;
 			statement_analyse();
+			Code[out].a = now_code;//回填statement出口
 			return 1;
 		}
 		else
@@ -713,8 +770,10 @@ bool statement_analyse()
 	}
 	else if (Syn[analyse_num].symbol == "while")
 	{
+		int begin_in, out;
 		analyse_num++;
 		now_num = analyse_num;
+		begin_in = now_code;//重复进行判断
 		lexp_analyse();
 		analyse_num++;
 		now_num = analyse_num;
@@ -736,14 +795,21 @@ bool statement_analyse()
 				err_num++;
 			}
 		}
+		else {//do
+			out = now_code;//这边错了要直接出去
+			gen("JPC", 0, 0);
+		}
 		analyse_num++;
 		now_num = analyse_num;
 		statement_analyse();
+		gen("JMP", 0, begin_in);
+		Code[out].a = now_code;
 		return 1;
 	}
 	else if (Syn[analyse_num].symbol == "call")
 	{
-		analyse_num++;;
+		int proc_ta, proc_ad;
+		analyse_num++;
 		now_num = analyse_num;
 		if (Syn[analyse_num].symbol != "identity")
 		{
@@ -765,11 +831,22 @@ bool statement_analyse()
 		}
 		else
 		{
-			if (find(Syn[analyse_num].identity) == -1) {
+			if (find(Syn[analyse_num].identity, fd_ta, fd_ad) == -1) {
 				err[err_num].line = Syn[analyse_num].line;
 				err[err_num].col = Syn[analyse_num].col;
 				err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
 				err_num++;
+			}
+			else {
+				if (Tablelink[fd_ta].level_table[fd_ad].type != "procedure") {
+					err[err_num].line = Syn[analyse_num].line;
+					err[err_num].col = Syn[analyse_num].col;
+					err[err_num].er = "变量" + Syn[analyse_num].identity + "不是proc！";
+					err_num++;
+				}
+				else {
+					gen("CAL", now_level - Tablelink[fd_ta].level, fd_ad);
+				}
 			}
 		}
 		analyse_num++;
@@ -886,11 +963,14 @@ bool statement_analyse()
 			}
 		}
 		else {
-			if (find(Syn[analyse_num].identity) == -1) {
+			if (find(Syn[analyse_num].identity, fd_ta, fd_ad) == -1) {
 				err[err_num].line = Syn[analyse_num].line;
 				err[err_num].col = Syn[analyse_num].col;
 				err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
 				err_num++;
+			}
+			else {
+				gen("RED", now_level - Tablelink[fd_ta].level, fd_ad);
 			}
 		}
 		analyse_num++;
@@ -903,11 +983,14 @@ bool statement_analyse()
 			{
 				analyse_num++;
 				now_num = analyse_num;
-				if (find(Syn[analyse_num].identity) == -1) {
+				if (find(Syn[analyse_num].identity, fd_ta, fd_ad) == -1) {
 					err[err_num].line = Syn[analyse_num].line;
 					err[err_num].col = Syn[analyse_num].col;
 					err[err_num].er = "变量" + Syn[analyse_num].identity + "未定义！";
 					err_num++;
+				}
+				else {
+					gen("RED", now_level - Tablelink[fd_ta].level, fd_ad);
 				}
 			}
 			else
@@ -977,6 +1060,7 @@ bool statement_analyse()
 		analyse_num++;
 		now_num = analyse_num;
 		exp_analyse();
+		gen("WRT", 0, 0);
 		analyse_num++;
 		while (Syn[analyse_num].identity == ",")
 		{
@@ -991,6 +1075,7 @@ bool statement_analyse()
 				break;
 			}
 			exp_analyse();
+			gen("WRT", 0, 0);
 			analyse_num++;
 		}
 		now_num = analyse_num;
@@ -1196,6 +1281,7 @@ bool proc_analyse(int pre_table,int level)
 			analyse_num++;
 			now_num = analyse_num;
 			block_analyse(now_table,level);
+			gen("RET", 0, 0);
 			now_level--;  //完成了block，层数减少
 			analyse_num++;
 			while (Syn[analyse_num].identity == ";")
@@ -1343,6 +1429,8 @@ bool condecl_analyse()
 bool block_analyse(int pre_table,int level)
 {
 	int now_num = analyse_num;
+	int out = now_code;
+	gen("JMP", 0, 0);
 	if (Syn[analyse_num].identity == "const")
 	{
 		condecl_analyse();
@@ -1360,6 +1448,8 @@ bool block_analyse(int pre_table,int level)
 		proc_analyse(now_table,level+1);
 		analyse_num++;
 	}
+	Code[out].a = now_code;
+	gen("INT", 0, level_idnum[now_level] + 3);
 	body_analyse();
 	check_table = fa_table[pre_table];
 	return 1;
