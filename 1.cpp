@@ -55,6 +55,8 @@ int analyse_num = 0;//当前单词
 int err_num = 0;//错误个数
 int level_idnum[100];//每一表变量个数
 int now_code = 1;//当前目标代码数量
+int flag_leveladd = 0;
+int level = 0;//层次
 
 int find(string id,int &find_table,int &find_addr)
 {
@@ -167,7 +169,7 @@ string isreserve(string temp)
 void word()
 {
 	fstream infile, outfile;
-	infile.open("1-1.txt", ios::in);
+	infile.open("3.txt", ios::in);
 	outfile.open("2.txt", ios::out);
 	if (infile.fail())
 	{
@@ -358,7 +360,7 @@ void word()
 				else
 				{
 					backchar(ch);
-					Syn[num].symbol = "less";
+					Syn[num].symbol = "lop";
 					Syn[num].identity = temp;
 					Syn[num].line = row;
 					Syn[num].col = pos - 1;
@@ -513,7 +515,10 @@ bool factor_analyse()
 				gen("LIT", 0, Tablelink[fd_ta].level_table[fd_ad].val);
 			}
 			else if (Tablelink[fd_ta].level_table[fd_ad].type == "var") {
-				gen("LOD", now_level - Tablelink[fd_ta].level, fd_ad);
+				if (flag_leveladd)
+					gen("LOD", now_level - Tablelink[fd_ta].level + 1, fd_ad);
+				else
+					gen("LOD", now_level - Tablelink[fd_ta].level, fd_ad);
 			}
 			else if (Tablelink[fd_ta].level_table[fd_ad].type == "procedure") {
 				err[err_num].line = Syn[analyse_num].line;
@@ -754,7 +759,7 @@ bool statement_analyse()
 		now_num = analyse_num;
 		statement_analyse();
 		out = now_code;
-		gen("JMP", 0, 0);//回填总语句出口
+		gen("JMP", 0, now_code + 1);//回填总语句出口
 		analyse_num++;
 		Code[else_in].a = now_code;//回填else语句
 		if (Syn[analyse_num].symbol == "else")
@@ -848,7 +853,8 @@ bool statement_analyse()
 					err_num++;
 				}
 				else {
-					gen("CAL", 0, Tablelink[fd_ta].level_table[fd_ad].val);//代码入口
+					gen("CALL", 0, 0);//代码入口
+					flag_leveladd = 1;
 				}
 			}
 		}
@@ -876,6 +882,8 @@ bool statement_analyse()
 		now_num = analyse_num;
 		if (Syn[analyse_num].identity == ")")
 		{
+			gen("CAL", 0, Tablelink[fd_ta].level_table[fd_ad].val);//代码入口
+			flag_leveladd = 0;
 			return 1;
 		}
 		else
@@ -901,6 +909,7 @@ bool statement_analyse()
 			now_num = analyse_num - 1;
 			if (Syn[analyse_num].identity == ")")
 			{
+				gen("CAL", 0, Tablelink[fd_ta].level_table[fd_ad].val);//代码入口
 				return 1;
 			}
 			else
@@ -922,6 +931,7 @@ bool statement_analyse()
 				}
 			}
 		}
+		gen("CAL", 0, Tablelink[fd_ta].level_table[fd_ad].val);//代码入口
 	}
 	else if (Syn[analyse_num].symbol == "read")
 	{
@@ -1434,7 +1444,7 @@ bool block_analyse(int pre_table,int level)
 {
 	int now_num = analyse_num;
 	int out = now_code;
-	gen("JMP", 0, 0);
+	gen("JMP", 0, 1);
 	if (Syn[analyse_num].identity == "const")
 	{
 		condecl_analyse();
@@ -1536,19 +1546,26 @@ int top = level_idnum[0]+3-1;//当前栈顶
 int sp = 0;//当前sp
 int lsp = sp;//过程调用前的lsp
 int act[100000];
-stack<int> s;
+stack<int> s,s2;
 void run_targetcode()
 {
 	int T = 1;
-	while (T <= now_code) {
-		cout << Code[T].func << Code[T].L << Code[T].a << endl;
+	int level_gap = -1;
+	int temp_proc = 0;//存储已有的proc变量
+	while (T < now_code) {
+		for (int i = 0; i <= top; i++)
+		{
+			cout << act[i] << " ";
+		}
+		cout << endl;
+		cout << T << "-" << Code[T].func << Code[T].L << Code[T].a << endl;
 		if (Code[T].func == "LIT") {//将常量放到栈顶
 			top++;
 			act[top] = Code[T].a;
 			T++;
 		}
 		else if (Code[T].func == "LOD") {//从层差L找偏移a
-			int Lgap = Code[T].L;
+			int Lgap = (Code[T].L == 0) ? Code[T].L : Code[T].L + level_gap;
 			int a_base = sp + 2;
 			while (Lgap--) {
 				a_base = act[a_base];
@@ -1560,17 +1577,24 @@ void run_targetcode()
 		else if (Code[T].func == "OPR") {
 			int temp1, temp2;
 			if (Code[T + 1].func == "LIT") {
+				cout << T+1 << "-" << Code[T+1].func << Code[T+1].L << Code[T+1].a << endl;
 				top++;
 				act[top] = Code[T + 1].a;
 			}
 			else if (Code[T + 1].func == "LOD") {
-				int Lgap = Code[T + 1].L;
+				cout << T+1 << "-" << Code[T+1].func << Code[T+1].L << Code[T+1].a << endl;
+				int Lgap = (Code[T].L == 0) ? Code[T].L : Code[T].L + level_gap;
 				int a_base = sp + 2;
 				while (Lgap--) {
 					a_base = act[a_base];
 				}
 				top++;
 				act[top] = act[a_base + Code[T+1].a + 1];
+				for (int i = 0; i <= top; i++)
+				{
+					cout << act[i] << " ";
+				}
+				cout << endl;
 			}
 			if (Code[T].a == 1) {
 				continue;
@@ -1587,7 +1611,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = temp1 + temp2;
+				act[top] = temp2 + temp1;
 			}
 			else if (Code[T].a == 4) {
 				temp1 = act[top];
@@ -1595,7 +1619,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = temp1 - temp2;
+				act[top] = temp2 - temp1;
 			}
 			else if (Code[T].a == 5) {
 				temp1 = act[top];
@@ -1603,7 +1627,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = temp1 * temp2;
+				act[top] = temp2 * temp1;
 			}
 			else if (Code[T].a == 6) {
 				temp1 = act[top];
@@ -1611,7 +1635,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = temp1 / temp2;
+				act[top] = temp2 / temp1;
 			}
 			else if (Code[T].a == 7) {
 				temp1 = act[top];
@@ -1625,7 +1649,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = !(temp1 - temp2);
+				act[top] = !(temp2 - temp1);
 			}
 			else if (Code[T].a == 9) {
 				temp1 = act[top];
@@ -1633,7 +1657,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = ((temp1 - temp2)!=0);
+				act[top] = ((temp2 - temp1)!=0);
 			}
 			else if (Code[T].a == 10) {
 				temp1 = act[top];
@@ -1641,7 +1665,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = ((temp1 - temp2) < 0);
+				act[top] = ((temp2 - temp1) < 0);
 			}
 			else if (Code[T].a == 11) {
 				temp1 = act[top];
@@ -1649,7 +1673,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = ((temp1 - temp2) <= 0);
+				act[top] = ((temp2 - temp1) <= 0);
 			}
 			else if (Code[T].a == 12) {
 				temp1 = act[top];
@@ -1657,7 +1681,7 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = ((temp1 - temp2) > 0);
+				act[top] = ((temp2 - temp1) > 0);
 			}
 			else if (Code[T].a == 13) {
 				temp1 = act[top];
@@ -1665,12 +1689,12 @@ void run_targetcode()
 				temp2 = act[top];
 				top--;//先出栈
 				top++;//入栈temp1+temp2
-				act[top] = ((temp1 - temp2) >= 0);
+				act[top] = ((temp2 - temp1) >= 0);
 			}
 			T = T + 2;
 		}
 		else if (Code[T].func == "STO") {
-			int Lgap = Code[T].L;
+			int Lgap = (Code[T].L == 0) ? Code[T].L : Code[T].L + level_gap;
 			int a_base = sp + 2;
 			while (Lgap--) {
 				a_base = act[a_base];
@@ -1680,8 +1704,9 @@ void run_targetcode()
 			act[a_base + Code[T].a + 1] = temp1;
 			T++;
 		}
-		else if (Code[T].func == "CAL") {
-			int temp_T = Code[T].a;
+		else if (Code[T].func == "CALL") {
+			level_gap++;
+			cout << "---------------------------------" << endl;
 			top++;
 			lsp = sp;//当前sp帧
 			sp = top;//计组
@@ -1691,16 +1716,19 @@ void run_targetcode()
 			top++;
 			act[top] = lsp + 2;//静态链
 			T++;
-			int c = 1;
-			while (Code[T].func == "LIT") {
-				act[top + c] = Code[T].a;
-				T++;
-				c++;
-			}
+			s2.push(top);
+		}
+		else if (Code[T].func == "CAL") {
+			int temp_T = Code[T].a;
+			T++;
 			s.push(T);
 			T = temp_T;
+			temp_proc = top - s2.top();
+			s2.pop();
 		}
 		else if (Code[T].func == "RET") {
+			cout << "---------------------------" << endl;
+			level_gap--;
 			top = act[sp + 1];//返回地址
 			sp = act[sp];
 			T = s.top();
@@ -1708,7 +1736,7 @@ void run_targetcode()
 		}
 		else if (Code[T].func == "INT") {
 			//开辟空间
-			top += Code[T].a - 3;
+			top += Code[T].a - 3 - temp_proc;
 			T++;
 		}
 		else if (Code[T].func == "JMP") {
@@ -1728,7 +1756,7 @@ void run_targetcode()
 			int temp;
 			cout << "请输入数据：";
 			cin >> temp;
-			int Lgap = Code[T].L;
+			int Lgap = (Code[T].L == 0) ? Code[T].L : Code[T].L + level_gap;
 			int a_base = sp + 2;
 			while (Lgap--) {
 				a_base = act[a_base];
