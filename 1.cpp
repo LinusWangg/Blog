@@ -178,7 +178,7 @@ string isreserve(string temp)
 void word()
 {
 	fstream infile, outfile;
-	infile.open("source.txt", ios::in);
+	infile.open("6.txt", ios::in);
 	outfile.open("2.txt", ios::out);
 	if (infile.fail())
 	{
