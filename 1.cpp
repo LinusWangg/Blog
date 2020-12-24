@@ -81,13 +81,13 @@ void enter(string id,string type)
 {
 	int fd_ta, fd_ad;
 	int find_result = find(id,fd_ta,fd_ad);  //查定义
-	if (find_result >= 0) {
+	/*if (find_result >= 0) {
 		err[err_num].line = Syn[analyse_num].line;
 		err[err_num].col = Syn[analyse_num].col;
 		err[err_num].er = "变量"+id+"重复定义！";
 		err_num++;
 		return;
-	}
+	}*/
 	table temp;
 	temp.identity = id;
 	temp.type = type;
@@ -172,7 +172,7 @@ string isreserve(string temp)
 void word()
 {
 	fstream infile, outfile;
-	infile.open("3.txt", ios::in);
+	infile.open("source.txt", ios::in);
 	outfile.open("2.txt", ios::out);
 	if (infile.fail())
 	{
