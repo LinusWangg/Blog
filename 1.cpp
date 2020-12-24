@@ -94,6 +94,12 @@ void enter(string id,string type)
 	temp.val = now_code;
 	if (type == "procedure") {
 		level_proc[now_code] = now_level;
+		int t = now_table + 1;
+		if (t != 1)
+			t = fa_table[t];
+		temp.addr = level_idnum[now_level];
+		Tablelink[t].level_table.push_back(temp);
+		return;
 	}
 	temp.addr = level_idnum[now_level];
 	Tablelink[now_table].level_table.push_back(temp);
@@ -1564,8 +1570,8 @@ void run_targetcode()
 		{
 			cout << act[i] << " ";
 		}
-		cout << endl;*/
-		//cout << T << "-" << Code[T].func << Code[T].L << Code[T].a << endl;
+		cout << endl;
+		cout << T << "-" << Code[T].func << Code[T].L << Code[T].a << endl;*/
 		if (Code[T].func == "LIT") {//将常量放到栈顶
 			top++;
 			act[top] = Code[T].a;
@@ -1747,7 +1753,7 @@ void run_targetcode()
 			else if (level_proc[Code[T].a] > s3.top())//调用子程序
 				act[top] = lsp + 2;
 			else if (level_proc[Code[T].a] < s3.top()) {//姊姊调用子
-				int t = s3.top() - level_proc[Code[T].a];
+				int t = s3.top() - level_proc[Code[T].a] + 1;
 				int m = lsp + 2;
 				while (t--) {
 					m = act[m];
