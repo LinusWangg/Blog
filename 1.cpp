@@ -56,7 +56,7 @@ int err_num = 0;//错误个数
 int level_idnum[100];//每一表变量个数
 int now_code = 1;//当前目标代码数量
 int flag_leveladd = 0;
-int level = 0;//层次
+int level_proc[100000];//层次
 
 int find(string id,int &find_table,int &find_addr)
 {
@@ -92,6 +92,9 @@ void enter(string id,string type)
 	temp.identity = id;
 	temp.type = type;
 	temp.val = now_code;
+	if (type == "procedure") {
+		level_proc[now_code] = now_level;
+	}
 	temp.addr = level_idnum[now_level];
 	Tablelink[now_table].level_table.push_back(temp);
 }
@@ -853,7 +856,7 @@ bool statement_analyse()
 					err_num++;
 				}
 				else {
-					gen("CALL", 0, 0);//代码入口
+					gen("CALL", 0, Tablelink[fd_ta].level_table[fd_ad].val);//代码入口
 					flag_leveladd = 1;
 				}
 			}
@@ -910,6 +913,7 @@ bool statement_analyse()
 			if (Syn[analyse_num].identity == ")")
 			{
 				gen("CAL", 0, Tablelink[fd_ta].level_table[fd_ad].val);//代码入口
+				flag_leveladd = 0;
 				return 1;
 			}
 			else
@@ -932,6 +936,7 @@ bool statement_analyse()
 			}
 		}
 		gen("CAL", 0, Tablelink[fd_ta].level_table[fd_ad].val);//代码入口
+		flag_leveladd = 0;
 	}
 	else if (Syn[analyse_num].symbol == "read")
 	{
@@ -1546,11 +1551,13 @@ int top = level_idnum[0]+3-1;//当前栈顶
 int sp = 0;//当前sp
 int lsp = sp;//过程调用前的lsp
 int act[100000];
-stack<int> s,s2;
+stack<int> s,s2,s3;
 void run_targetcode()
 {
+	int flag_fac = 0;//特用于传参的
+	s3.push(0);
 	int T = 1;
-	int level_gap = -1;
+	int temp_T = -1;
 	int temp_proc = 0;//存储已有的proc变量
 	while (T < now_code) {
 		for (int i = 0; i <= top; i++)
@@ -1565,10 +1572,19 @@ void run_targetcode()
 			T++;
 		}
 		else if (Code[T].func == "LOD") {//从层差L找偏移a
-			int Lgap = (Code[T].L == 0) ? Code[T].L : Code[T].L + level_gap;
+			int Lgap =  Code[T].L;
 			int a_base = sp + 2;
-			while (Lgap--) {
-				a_base = act[a_base];
+			if (flag_fac == 1) {
+				a_base = sp;
+				while (Lgap--) {
+					a_base = act[a_base];
+				}
+				a_base += 2;
+			}
+			else {
+				while (Lgap--) {
+					a_base = act[a_base];
+				}
 			}
 			top++;
 			act[top] = act[a_base + Code[T].a + 1];
@@ -1583,10 +1599,19 @@ void run_targetcode()
 			}
 			else if (Code[T + 1].func == "LOD") {
 				cout << T+1 << "-" << Code[T+1].func << Code[T+1].L << Code[T+1].a << endl;
-				int Lgap = (Code[T].L == 0) ? Code[T].L : Code[T].L + level_gap;
+				int Lgap = Code[T].L;
 				int a_base = sp + 2;
-				while (Lgap--) {
-					a_base = act[a_base];
+				if (flag_fac == 1) {
+					a_base = sp;
+					while (Lgap--) {
+						a_base = act[a_base];
+					}
+					a_base += 2;
+				}
+				else {
+					while (Lgap--) {
+						a_base = act[a_base];
+					}
 				}
 				top++;
 				act[top] = act[a_base + Code[T+1].a + 1];
@@ -1694,7 +1719,7 @@ void run_targetcode()
 			T = T + 2;
 		}
 		else if (Code[T].func == "STO") {
-			int Lgap = (Code[T].L == 0) ? Code[T].L : Code[T].L + level_gap;
+			int Lgap = Code[T].L;
 			int a_base = sp + 2;
 			while (Lgap--) {
 				a_base = act[a_base];
@@ -1705,7 +1730,7 @@ void run_targetcode()
 			T++;
 		}
 		else if (Code[T].func == "CALL") {
-			level_gap++;
+			flag_fac = 1;
 			cout << "---------------------------------" << endl;
 			top++;
 			lsp = sp;//当前sp帧
@@ -1714,12 +1739,25 @@ void run_targetcode()
 			top++;
 			act[top] = top - 2;//返回地址
 			top++;
-			act[top] = lsp + 2;//静态链
+			if (level_proc[Code[T].a] == s3.top()) //同级调用
+				act[top] = act[lsp + 2];//静态链
+			else if (level_proc[Code[T].a] > s3.top())//调用子程序
+				act[top] = lsp + 2;
+			else if (level_proc[Code[T].a] < s3.top()) {//姊姊调用子
+				int t = s3.top() - level_proc[Code[T].a];
+				int m = lsp + 2;
+				while (t--) {
+					m = act[m];
+				}
+				act[top] = m;
+			}
+			s3.push(level_proc[Code[T].a]);
 			T++;
 			s2.push(top);
 		}
 		else if (Code[T].func == "CAL") {
-			int temp_T = Code[T].a;
+			flag_fac = 0;
+			temp_T = Code[T].a;
 			T++;
 			s.push(T);
 			T = temp_T;
@@ -1728,11 +1766,11 @@ void run_targetcode()
 		}
 		else if (Code[T].func == "RET") {
 			cout << "---------------------------" << endl;
-			level_gap--;
 			top = act[sp + 1];//返回地址
 			sp = act[sp];
 			T = s.top();
 			s.pop();
+			s3.pop();
 		}
 		else if (Code[T].func == "INT") {
 			//开辟空间
@@ -1756,7 +1794,7 @@ void run_targetcode()
 			int temp;
 			cout << "请输入数据：";
 			cin >> temp;
-			int Lgap = (Code[T].L == 0) ? Code[T].L : Code[T].L + level_gap;
+			int Lgap = Code[T].L;
 			int a_base = sp + 2;
 			while (Lgap--) {
 				a_base = act[a_base];
