@@ -1560,12 +1560,12 @@ void run_targetcode()
 	int temp_T = -1;
 	int temp_proc = 0;//存储已有的proc变量
 	while (T < now_code) {
-		for (int i = 0; i <= top; i++)
+		/*for (int i = 0; i <= top; i++)
 		{
 			cout << act[i] << " ";
 		}
-		cout << endl;
-		cout << T << "-" << Code[T].func << Code[T].L << Code[T].a << endl;
+		cout << endl;*/
+		//cout << T << "-" << Code[T].func << Code[T].L << Code[T].a << endl;
 		if (Code[T].func == "LIT") {//将常量放到栈顶
 			top++;
 			act[top] = Code[T].a;
@@ -1587,19 +1587,20 @@ void run_targetcode()
 				}
 			}
 			top++;
+			//cout << "取" << a_base + Code[T].a + 1 << "位置" << endl;
 			act[top] = act[a_base + Code[T].a + 1];
 			T++;
 		}
 		else if (Code[T].func == "OPR") {
 			int temp1, temp2;
 			if (Code[T + 1].func == "LIT") {
-				cout << T+1 << "-" << Code[T+1].func << Code[T+1].L << Code[T+1].a << endl;
+				//cout << T+1 << "-" << Code[T+1].func << Code[T+1].L << Code[T+1].a << endl;
 				top++;
 				act[top] = Code[T + 1].a;
 			}
 			else if (Code[T + 1].func == "LOD") {
-				cout << T+1 << "-" << Code[T+1].func << Code[T+1].L << Code[T+1].a << endl;
-				int Lgap = Code[T].L;
+				//cout << T+1 << "-" << Code[T+1].func << Code[T+1].L << Code[T+1].a << endl;
+				int Lgap = Code[T+1].L;
 				int a_base = sp + 2;
 				if (flag_fac == 1) {
 					a_base = sp;
@@ -1614,12 +1615,13 @@ void run_targetcode()
 					}
 				}
 				top++;
+				//cout << "取" << a_base + Code[T].a + 1 << "位置" << endl;
 				act[top] = act[a_base + Code[T+1].a + 1];
-				for (int i = 0; i <= top; i++)
+				/*for (int i = 0; i <= top; i++)
 				{
 					cout << act[i] << " ";
 				}
-				cout << endl;
+				cout << endl;*/
 			}
 			if (Code[T].a == 1) {
 				continue;
@@ -1726,12 +1728,13 @@ void run_targetcode()
 			}
 			int temp1 = act[top];
 			top--;
+			//cout << "存" << a_base + Code[T].a + 1 << "位置" << endl;
 			act[a_base + Code[T].a + 1] = temp1;
 			T++;
 		}
 		else if (Code[T].func == "CALL") {
 			flag_fac = 1;
-			cout << "---------------------------------" << endl;
+			//cout << "---------------------------------" << endl;
 			top++;
 			lsp = sp;//当前sp帧
 			sp = top;//计组
@@ -1765,7 +1768,7 @@ void run_targetcode()
 			s2.pop();
 		}
 		else if (Code[T].func == "RET") {
-			cout << "---------------------------" << endl;
+			//cout << "---------------------------" << endl;
 			top = act[sp + 1];//返回地址
 			sp = act[sp];
 			T = s.top();
@@ -1805,7 +1808,7 @@ void run_targetcode()
 		else if (Code[T].func == "WRT") {
 			int temp = act[top];
 			top--;
-			cout << temp << endl;
+			cout << "结果:" << temp << endl;
 			T++;
 		}
 	}
