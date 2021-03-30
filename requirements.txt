@@ -54,7 +54,7 @@ openpyxl==2.5.7
 packaging==20.1
 Pillow==7.0.0
 pycparser==2.19
-Pygments==2.2.0
+Pygments==2.7.4
 PyJWT==1.6.4
 pylint==2.4.4
 PyMySQL==0.9.3
